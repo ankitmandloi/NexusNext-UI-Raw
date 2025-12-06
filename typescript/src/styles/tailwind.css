@@ -1,0 +1,12 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: Inter, sans-serif;
+  --font-sans--font-feature-settings: 'cv11';
+}
+
+/* Hide scrollbar on main page */
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
