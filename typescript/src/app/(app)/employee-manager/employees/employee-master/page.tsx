@@ -24,10 +24,8 @@ import {
   PlusIcon,
 } from '@heroicons/react/16/solid'
 
-
-
 // ============================================================================
-// TYPES & INTERFACES
+// TYPES & INTERFACE
 // ============================================================================
 
 type EmployeeStatus = 'Active' | 'Deactive'
