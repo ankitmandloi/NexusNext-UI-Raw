@@ -20,7 +20,7 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & CONSTANTS
+// TYPES & CONSTANT
 // ============================================================================
 
 const regionOptions = ['North', 'South', 'East', 'West', 'Central']
