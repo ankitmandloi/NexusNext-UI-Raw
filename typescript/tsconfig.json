@@ -22,6 +22,6 @@
     },
     "target": "ES2017"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(app)/basic-master/address-master/pin-code/page.jsx", "src/app/(app)/basic-master/address-master/district/page.jsx", "src/app/(app)/basic-master/address-master/region-assignment/page.jsx", "src/app/(app)/basic-master/address-master/city/page.jsx", "src/app/(app)/basic-master/address-master/state/page.jsx", "src/app/(app)/basic-master/group/page.jsx", "src/app/(app)/basic-master/group-tag/page.jsx", "src/app/(app)/customer-master/customer/page.jsx", "src/app/(app)/employee-manager/area-master/page.jsx", "src/app/(app)/employee-manager/employees/employee-designation/page.jsx"],
   "exclude": ["node_modules"]
 }

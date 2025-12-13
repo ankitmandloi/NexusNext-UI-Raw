@@ -21,28 +21,10 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-export interface GroupEntity {
-  id: number
-  name: string
-}
-
-export interface GroupTag {
-  id: number
-  groupId: number
-  groupName: string
-  tagName: string
-}
-
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
-
-// ============================================================================
 // CUSTOM ICON
 // ============================================================================
 
-function DeleteIcon({ className }: { className?: string }) {
+function DeleteIcon({ className }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
       <polyline points="3,6 5,6 21,6"></polyline>
@@ -55,14 +37,14 @@ function DeleteIcon({ className }: { className?: string }) {
 // SAMPLE DATA
 // ============================================================================
 
-const initialGroups: GroupEntity[] = [
+const initialGroups = [
   { id: 1, name: 'Retail' },
   { id: 2, name: 'Wholesale' },
   { id: 3, name: 'Corporate' },
   { id: 4, name: 'Government' },
 ]
 
-const initialGroupTags: GroupTag[] = [
+const initialGroupTags = [
   { id: 1, groupId: 1, groupName: 'Retail', tagName: 'Seasonal' },
   { id: 2, groupId: 1, groupName: 'Retail', tagName: 'Online' },
   { id: 3, groupId: 2, groupName: 'Wholesale', tagName: 'Bulk' },
@@ -73,7 +55,7 @@ const initialGroupTags: GroupTag[] = [
 // ACTION BUTTON
 // ============================================================================
 
-function ActionButton({ children, variant, title, onClick }: { children: React.ReactNode; variant: 'view' | 'edit' | 'delete'; title: string; onClick?: () => void }) {
+function ActionButton({ children, variant, title, onClick }) {
   const variantStyles = {
     view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
     edit: 'hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10',
@@ -91,7 +73,7 @@ function ActionButton({ children, variant, title, onClick }: { children: React.R
 // VIEW ALERT
 // ============================================================================
 
-function ViewGroupTagAlert({ isOpen, onClose, tag }: { isOpen: boolean; onClose: () => void; tag: GroupTag | null }) {
+function ViewGroupTagAlert({ isOpen, onClose, tag }) {
   if (!tag) return null
   return (
     <Alert open={isOpen} onClose={onClose}>
@@ -104,9 +86,7 @@ function ViewGroupTagAlert({ isOpen, onClose, tag }: { isOpen: boolean; onClose:
           <div className="flex gap-2"><span className="font-medium text-zinc-700 dark:text-zinc-300">Group Tag Name:</span><span className="text-zinc-600 dark:text-zinc-400">{tag.tagName}</span></div>
         </div>
       </AlertBody>
-      <AlertActions>
-        <Button color="dark/zinc" onClick={onClose}>Close</Button>
-      </AlertActions>
+      <AlertActions><Button color="dark/zinc" onClick={onClose}>Close</Button></AlertActions>
     </Alert>
   )
 }
@@ -115,8 +95,8 @@ function ViewGroupTagAlert({ isOpen, onClose, tag }: { isOpen: boolean; onClose:
 // EDIT ALERT
 // ============================================================================
 
-function EditGroupTagAlert({ isOpen, onClose, tag, groups, onSave }: { isOpen: boolean; onClose: () => void; tag: GroupTag | null; groups: GroupEntity[]; onSave: (id: number, groupId: number, groupName: string, tagName: string) => void }) {
-  const [editedGroupId, setEditedGroupId] = useState<number>(0)
+function EditGroupTagAlert({ isOpen, onClose, tag, groups, onSave }) {
+  const [editedGroupId, setEditedGroupId] = useState(0)
   const [editedTagName, setEditedTagName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -131,16 +111,13 @@ function EditGroupTagAlert({ isOpen, onClose, tag, groups, onSave }: { isOpen: b
     if (!tag || editedGroupId === 0 || !editedTagName.trim()) return
     setIsSubmitting(true)
     const groupName = groups.find(g => g.id === editedGroupId)?.name || ''
-    setTimeout(() => {
-      onSave(tag.id, editedGroupId, groupName, editedTagName.trim())
-      setIsSubmitting(false)
-      onClose()
-    }, 300)
+    setTimeout(() => { onSave(tag.id, editedGroupId, groupName, editedTagName.trim()); setIsSubmitting(false); onClose() }, 300)
   }
 
   const handleCancel = () => { setEditedGroupId(0); setEditedTagName(''); onClose() }
 
   if (!tag) return null
+
   return (
     <Alert open={isOpen} onClose={handleCancel}>
       <AlertTitle>Edit Group Tag</AlertTitle>
@@ -172,8 +149,8 @@ function EditGroupTagAlert({ isOpen, onClose, tag, groups, onSave }: { isOpen: b
 // ADD ALERT
 // ============================================================================
 
-function AddGroupTagAlert({ isOpen, onClose, groups, onAdd }: { isOpen: boolean; onClose: () => void; groups: GroupEntity[]; onAdd: (groupId: number, groupName: string, tagName: string) => void }) {
-  const [selectedGroupId, setSelectedGroupId] = useState<number>(0)
+function AddGroupTagAlert({ isOpen, onClose, groups, onAdd }) {
+  const [selectedGroupId, setSelectedGroupId] = useState(0)
   const [newTagName, setNewTagName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -183,13 +160,7 @@ function AddGroupTagAlert({ isOpen, onClose, groups, onAdd }: { isOpen: boolean;
     if (selectedGroupId === 0 || !newTagName.trim()) return
     setIsSubmitting(true)
     const groupName = groups.find(g => g.id === selectedGroupId)?.name || ''
-    setTimeout(() => {
-      onAdd(selectedGroupId, groupName, newTagName.trim())
-      setIsSubmitting(false)
-      setSelectedGroupId(0)
-      setNewTagName('')
-      onClose()
-    }, 300)
+    setTimeout(() => { onAdd(selectedGroupId, groupName, newTagName.trim()); setIsSubmitting(false); setSelectedGroupId(0); setNewTagName(''); onClose() }, 300)
   }
 
   const handleCancel = () => { setSelectedGroupId(0); setNewTagName(''); onClose() }
@@ -225,11 +196,17 @@ function AddGroupTagAlert({ isOpen, onClose, groups, onAdd }: { isOpen: boolean;
 // DELETE ALERT
 // ============================================================================
 
-function DeleteGroupTagAlert({ isOpen, onClose, tag, onConfirm }: { isOpen: boolean; onClose: () => void; tag: GroupTag | null; onConfirm: (id: number) => void }) {
+function DeleteGroupTagAlert({ isOpen, onClose, tag, onConfirm }) {
   const [isDeleting, setIsDeleting] = useState(false)
-  const handleDelete = () => { if (!tag) return; setIsDeleting(true); setTimeout(() => { onConfirm(tag.id); setIsDeleting(false); onClose() }, 300) }
+
+  const handleDelete = () => {
+    if (!tag) return
+    setIsDeleting(true)
+    setTimeout(() => { onConfirm(tag.id); setIsDeleting(false); onClose() }, 300)
+  }
 
   if (!tag) return null
+
   return (
     <Alert open={isOpen} onClose={onClose}>
       <AlertTitle>Are you sure you want to delete this group tag?</AlertTitle>
@@ -249,11 +226,11 @@ function DeleteGroupTagAlert({ isOpen, onClose, tag, onConfirm }: { isOpen: bool
 // ============================================================================
 
 export default function GroupTagPage() {
-  const [groupTags, setGroupTags] = useState<GroupTag[]>(initialGroupTags)
-  const [groups] = useState<GroupEntity[]>(initialGroups)
+  const [groupTags, setGroupTags] = useState(initialGroupTags)
+  const [groups] = useState(initialGroups)
 
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedTag, setSelectedTag] = useState<GroupTag | null>(null)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedTag, setSelectedTag] = useState(null)
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
@@ -261,11 +238,11 @@ export default function GroupTagPage() {
   const startIndex = (currentPage - 1) * itemsPerPage
   const currentTags = groupTags.slice(startIndex, startIndex + itemsPerPage)
 
-  const handlePageChange = (page: number) => setCurrentPage(page)
+  const handlePageChange = (page) => setCurrentPage(page)
 
-  const handleView = (t: GroupTag) => { setSelectedTag(t); setActiveModal('view') }
-  const handleEdit = (t: GroupTag) => { setSelectedTag(t); setActiveModal('edit') }
-  const handleDelete = (t: GroupTag) => { setSelectedTag(t); setActiveModal('delete') }
+  const handleView = (t) => { setSelectedTag(t); setActiveModal('view') }
+  const handleEdit = (t) => { setSelectedTag(t); setActiveModal('edit') }
+  const handleDelete = (t) => { setSelectedTag(t); setActiveModal('delete') }
   const handleAddClick = () => setActiveModal('add')
   const closeModal = () => { setActiveModal(null); setSelectedTag(null) }
 
@@ -273,16 +250,16 @@ export default function GroupTagPage() {
   const handleExportExcel = () => console.log('Export to Excel clicked')
   const handleDownloadFormat = () => console.log('Download Format clicked')
 
-  const handleAddTag = (groupId: number, groupName: string, tagName: string) => {
+  const handleAddTag = (groupId, groupName, tagName) => {
     const newId = groupTags.length > 0 ? Math.max(...groupTags.map(g => g.id)) + 1 : 1
     setGroupTags(prev => [...prev, { id: newId, groupId, groupName, tagName }])
   }
 
-  const handleSaveEdit = (id: number, groupId: number, groupName: string, tagName: string) => {
+  const handleSaveEdit = (id, groupId, groupName, tagName) => {
     setGroupTags(prev => prev.map(g => g.id === id ? { ...g, groupId, groupName, tagName } : g))
   }
 
-  const handleConfirmDelete = (id: number) => {
+  const handleConfirmDelete = (id) => {
     setGroupTags(prev => prev.filter(g => g.id !== id))
   }
 

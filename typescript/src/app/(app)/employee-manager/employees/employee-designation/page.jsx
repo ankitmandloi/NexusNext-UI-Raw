@@ -19,18 +19,6 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-export interface EmployeeDesignation {
-  id: number
-  designation: string
-  hierarchyLevel: number
-}
-
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
-
-// ============================================================================
 // CONSTANTS
 // ============================================================================
 
@@ -41,7 +29,7 @@ const ITEMS_PER_PAGE = 10
 // CUSTOM ICONS
 // ============================================================================
 
-function DeleteIcon({ className }: { className?: string }) {
+function DeleteIcon({ className }) {
   return (
     <svg 
       width="16" 
@@ -62,7 +50,7 @@ function DeleteIcon({ className }: { className?: string }) {
 // INITIAL DATA
 // ============================================================================
 
-const initialDesignations: EmployeeDesignation[] = [
+const initialDesignations = [
   { id: 1, designation: 'DSR', hierarchyLevel: 1 },
   { id: 2, designation: 'Area Head', hierarchyLevel: 2 },
   { id: 3, designation: 'LME/RME/SRME', hierarchyLevel: 3 },
@@ -77,17 +65,7 @@ const initialDesignations: EmployeeDesignation[] = [
 // ACTION BUTTON COMPONENT
 // ============================================================================
 
-function ActionButton({
-  children,
-  variant,
-  title,
-  onClick,
-}: {
-  children: React.ReactNode
-  variant: 'view' | 'edit' | 'delete'
-  title: string
-  onClick?: () => void
-}) {
+function ActionButton({ children, variant, title, onClick }) {
   const variantStyles = {
     view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
     edit: 'hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10',
@@ -120,15 +98,7 @@ function ActionButton({
 // VIEW ALERT COMPONENT
 // ============================================================================
 
-function ViewDesignationAlert({
-  isOpen,
-  onClose,
-  designation,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  designation: EmployeeDesignation | null
-}) {
+function ViewDesignationAlert({ isOpen, onClose, designation }) {
   if (!designation) return null
 
   return (
@@ -164,19 +134,9 @@ function ViewDesignationAlert({
 // EDIT ALERT COMPONENT
 // ============================================================================
 
-function EditDesignationAlert({
-  isOpen,
-  onClose,
-  designation,
-  onSave,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  designation: EmployeeDesignation | null
-  onSave: (id: number, newDesignation: string, newHierarchyLevel: number) => void
-}) {
+function EditDesignationAlert({ isOpen, onClose, designation, onSave }) {
   const [editedDesignation, setEditedDesignation] = useState('')
-  const [editedHierarchyLevel, setEditedHierarchyLevel] = useState<number>(1)
+  const [editedHierarchyLevel, setEditedHierarchyLevel] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -186,7 +146,7 @@ function EditDesignationAlert({
     }
   }, [designation, isOpen])
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!designation || !editedDesignation.trim()) return
 
     setIsSubmitting(true)
@@ -208,17 +168,14 @@ function EditDesignationAlert({
   return (
     <Alert open={isOpen} onClose={handleCancel}>
       <AlertTitle>Edit Designation</AlertTitle>
-      <AlertDescription>
-        Update the designation details below.
-      </AlertDescription>
+      <AlertDescription>Update the designation details below.</AlertDescription>
       <AlertBody>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="editDesignation" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Employee Designation
             </label>
             <Input
-              id="editDesignation"
               type="text"
               value={editedDesignation}
               onChange={(e) => setEditedDesignation(e.target.value)}
@@ -227,10 +184,10 @@ function EditDesignationAlert({
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="editHierarchyLevel" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Hierarchy Level
             </label>
-            <Listbox value={editedHierarchyLevel} onChange={(v) => setEditedHierarchyLevel(v)}>
+            <Listbox value={editedHierarchyLevel} onChange={setEditedHierarchyLevel}>
               {hierarchyLevelOptions.map((level) => (
                 <ListboxOption key={level} value={level}>
                   <ListboxLabel>{level}</ListboxLabel>
@@ -241,9 +198,7 @@ function EditDesignationAlert({
         </div>
       </AlertBody>
       <AlertActions>
-        <Button plain onClick={handleCancel} disabled={isSubmitting}>
-          Cancel
-        </Button>
+        <Button plain onClick={handleCancel} disabled={isSubmitting}>Cancel</Button>
         <Button color="dark/zinc" onClick={handleSave} disabled={!editedDesignation.trim() || isSubmitting}>
           {isSubmitting ? 'Saving...' : 'Save'}
         </Button>
@@ -256,17 +211,9 @@ function EditDesignationAlert({
 // ADD ALERT COMPONENT
 // ============================================================================
 
-function AddDesignationAlert({
-  isOpen,
-  onClose,
-  onAdd,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  onAdd: (designation: string, hierarchyLevel: number) => void
-}) {
+function AddDesignationAlert({ isOpen, onClose, onAdd }) {
   const [newDesignation, setNewDesignation] = useState('')
-  const [newHierarchyLevel, setNewHierarchyLevel] = useState<number>(1)
+  const [newHierarchyLevel, setNewHierarchyLevel] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -276,7 +223,7 @@ function AddDesignationAlert({
     }
   }, [isOpen])
 
-  const handleAdd = async () => {
+  const handleAdd = () => {
     if (!newDesignation.trim()) return
 
     setIsSubmitting(true)
@@ -298,17 +245,14 @@ function AddDesignationAlert({
   return (
     <Alert open={isOpen} onClose={handleCancel}>
       <AlertTitle>Add New Designation</AlertTitle>
-      <AlertDescription>
-        Enter the details for the new designation below.
-      </AlertDescription>
+      <AlertDescription>Enter the details for the new designation below.</AlertDescription>
       <AlertBody>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="newDesignation" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Employee Designation
             </label>
             <Input
-              id="newDesignation"
               type="text"
               value={newDesignation}
               onChange={(e) => setNewDesignation(e.target.value)}
@@ -317,10 +261,10 @@ function AddDesignationAlert({
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="newHierarchyLevel" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Hierarchy Level
             </label>
-            <Listbox value={newHierarchyLevel} onChange={(v) => setNewHierarchyLevel(v)}>
+            <Listbox value={newHierarchyLevel} onChange={setNewHierarchyLevel}>
               {hierarchyLevelOptions.map((level) => (
                 <ListboxOption key={level} value={level}>
                   <ListboxLabel>{level}</ListboxLabel>
@@ -331,9 +275,7 @@ function AddDesignationAlert({
         </div>
       </AlertBody>
       <AlertActions>
-        <Button plain onClick={handleCancel} disabled={isSubmitting}>
-          Cancel
-        </Button>
+        <Button plain onClick={handleCancel} disabled={isSubmitting}>Cancel</Button>
         <Button color="dark/zinc" onClick={handleAdd} disabled={!newDesignation.trim() || isSubmitting}>
           {isSubmitting ? 'Adding...' : 'Add'}
         </Button>
@@ -346,20 +288,10 @@ function AddDesignationAlert({
 // DELETE ALERT COMPONENT
 // ============================================================================
 
-function DeleteDesignationAlert({
-  isOpen,
-  onClose,
-  designation,
-  onConfirm,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  designation: EmployeeDesignation | null
-  onConfirm: (id: number) => void
-}) {
+function DeleteDesignationAlert({ isOpen, onClose, designation, onConfirm }) {
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!designation) return
 
     setIsDeleting(true)
@@ -376,13 +308,11 @@ function DeleteDesignationAlert({
     <Alert open={isOpen} onClose={onClose}>
       <AlertTitle>Are you sure you want to delete this designation?</AlertTitle>
       <AlertDescription>
-        You are about to delete <strong className="text-zinc-900 dark:text-white">{designation.designation}</strong>. 
-        This action cannot be undone. All associated data will be permanently removed.
+        You are about to delete <strong className="text-zinc-900 dark:text-white">{designation.designation}</strong>.
+        This action cannot be undone.
       </AlertDescription>
       <AlertActions>
-        <Button plain onClick={onClose} disabled={isDeleting}>
-          Cancel
-        </Button>
+        <Button plain onClick={onClose} disabled={isDeleting}>Cancel</Button>
         <Button color="red" onClick={handleDelete} disabled={isDeleting}>
           {isDeleting ? 'Deleting...' : 'Yes, Delete'}
         </Button>
@@ -396,84 +326,45 @@ function DeleteDesignationAlert({
 // ============================================================================
 
 export default function EmployeeDesignationPage() {
-  // State management
-  const [designations, setDesignations] = useState<EmployeeDesignation[]>(initialDesignations)
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedDesignation, setSelectedDesignation] = useState<EmployeeDesignation | null>(null)
+  const [designations, setDesignations] = useState(initialDesignations)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedDesignation, setSelectedDesignation] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Calculate pagination
   const totalPages = Math.ceil(designations.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
   const currentDesignations = designations.slice(startIndex, endIndex)
 
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+  const handlePageChange = (page) => setCurrentPage(page)
 
-  // ============================================================================
-  // ACTION HANDLERS
-  // ============================================================================
-
-  const handleView = (designation: EmployeeDesignation) => {
-    setSelectedDesignation(designation)
-    setActiveModal('view')
-  }
-
-  const handleEdit = (designation: EmployeeDesignation) => {
-    setSelectedDesignation(designation)
-    setActiveModal('edit')
-  }
-
-  const handleDelete = (designation: EmployeeDesignation) => {
-    setSelectedDesignation(designation)
-    setActiveModal('delete')
-  }
-
-  const handleAddClick = () => {
-    setActiveModal('add')
-  }
-
-  const closeModal = () => {
-    setActiveModal(null)
-    setSelectedDesignation(null)
-  }
-
-  // ============================================================================
-  // CRUD HANDLERS
-  // ============================================================================
+  const handleView = (d) => { setSelectedDesignation(d); setActiveModal('view') }
+  const handleEdit = (d) => { setSelectedDesignation(d); setActiveModal('edit') }
+  const handleDelete = (d) => { setSelectedDesignation(d); setActiveModal('delete') }
+  const handleAddClick = () => setActiveModal('add')
+  const closeModal = () => { setActiveModal(null); setSelectedDesignation(null) }
 
   const handleImportExcel = () => console.log('Import from Excel clicked')
   const handleExportExcel = () => console.log('Export to Excel clicked')
   const handleDownloadFormat = () => console.log('Download Format clicked')
 
-  const handleAddDesignation = (designation: string, hierarchyLevel: number) => {
+  const handleAddDesignation = (designation, hierarchyLevel) => {
     const newId = designations.length > 0 ? Math.max(...designations.map(d => d.id)) + 1 : 1
-    const newDesignation: EmployeeDesignation = { id: newId, designation, hierarchyLevel }
-    setDesignations((prev) => [...prev, newDesignation])
+    setDesignations(prev => [...prev, { id: newId, designation, hierarchyLevel }])
   }
 
-  const handleSaveEdit = (id: number, newDesignation: string, newHierarchyLevel: number) => {
-    setDesignations((prev) =>
-      prev.map((d) =>
-        d.id === id ? { ...d, designation: newDesignation, hierarchyLevel: newHierarchyLevel } : d
-      )
+  const handleSaveEdit = (id, newDesignation, newHierarchyLevel) => {
+    setDesignations(prev =>
+      prev.map(d => d.id === id ? { ...d, designation: newDesignation, hierarchyLevel: newHierarchyLevel } : d)
     )
   }
 
-  const handleConfirmDelete = (id: number) => {
-    setDesignations((prev) => prev.filter((d) => d.id !== id))
+  const handleConfirmDelete = (id) => {
+    setDesignations(prev => prev.filter(d => d.id !== id))
   }
-
-  // ============================================================================
-  // RENDER
-  // ============================================================================
 
   return (
     <div className="flex flex-col" style={{ height: 'calc(100vh - 110px)' }}>
-      {/* Header - Sticky */}
       <div className="sticky top-0 z-20 bg-white dark:bg-zinc-900 pb-4 shrink-0">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="max-sm:w-full sm:flex-1">
@@ -489,15 +380,9 @@ export default function EmployeeDesignationPage() {
                 <ChevronDownIcon />
               </DropdownButton>
               <DropdownMenu>
-                <DropdownItem onClick={handleImportExcel}>
-                  Import from Excel
-                </DropdownItem>
-                <DropdownItem onClick={handleExportExcel}>
-                  Export to Excel
-                </DropdownItem>
-                <DropdownItem onClick={handleDownloadFormat}>
-                  Download Format
-                </DropdownItem>
+                <DropdownItem onClick={handleImportExcel}>Import from Excel</DropdownItem>
+                <DropdownItem onClick={handleExportExcel}>Export to Excel</DropdownItem>
+                <DropdownItem onClick={handleDownloadFormat}>Download Format</DropdownItem>
               </DropdownMenu>
             </Dropdown>
             <Button color="dark/zinc" onClick={handleAddClick}>
@@ -508,9 +393,7 @@ export default function EmployeeDesignationPage() {
         </div>
       </div>
 
-      {/* Table Card */}
       <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
-        {/* Horizontal Scroll Container */}
         <div className="flex-1 overflow-x-auto overflow-y-hidden
           [&::-webkit-scrollbar]:h-1.5
           [&::-webkit-scrollbar-track]:bg-transparent
@@ -519,15 +402,13 @@ export default function EmployeeDesignationPage() {
           dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600"
         >
           <div className="min-w-[600px] flex flex-col h-full">
-            {/* Table Header - Fixed */}
             <div className="shrink-0 border-b border-zinc-950/10 dark:border-white/10 h-11 flex items-center bg-white dark:bg-zinc-900">
               <div className="w-[120px] px-6 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">ID</div>
               <div className="flex-1 px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Employee Designation</div>
-              <div className="w-[180px] px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Hierarchy Level</div>
-              <div className="w-[160px] px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Actions</div>
+              <div className="w-[220px] px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Hierarchy Level</div>
+              <div className="w-[200px] px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Actions</div>
             </div>
 
-            {/* Scrollable Table Body */}
             <div className="flex-1 overflow-y-auto
               [&::-webkit-scrollbar]:w-1.5
               [&::-webkit-scrollbar-track]:bg-transparent
@@ -553,10 +434,10 @@ export default function EmployeeDesignationPage() {
                     <div className="flex-1 px-4 text-sm font-medium text-zinc-950 dark:text-white text-center">
                       {designation.designation}
                     </div>
-                    <div className="w-[180px] px-4 text-sm text-zinc-600 dark:text-zinc-400 text-center">
+                    <div className="w-[220px] px-4 text-sm text-zinc-600 dark:text-zinc-400 text-center">
                       {designation.hierarchyLevel}
                     </div>
-                    <div className="w-[160px] px-4 flex items-center justify-center gap-3">
+                    <div className="w-[200px] px-4 flex items-center justify-center gap-3">
                       <ActionButton 
                         variant="view" 
                         title="View"
@@ -586,7 +467,6 @@ export default function EmployeeDesignationPage() {
           </div>
         </div>
 
-        {/* Pagination Footer */}
         <div className="flex items-center justify-center border-t border-zinc-950/5 dark:border-white/5 px-4 h-11 shrink-0">
           <Pagination>
             <button
@@ -622,25 +502,18 @@ export default function EmployeeDesignationPage() {
         </div>
       </div>
 
-      {/* ================================================================== */}
-      {/* ALERT MODALS */}
-      {/* ================================================================== */}
-
-      {/* Add Designation Alert */}
       <AddDesignationAlert
         isOpen={activeModal === 'add'}
         onClose={closeModal}
         onAdd={handleAddDesignation}
       />
 
-      {/* View Designation Alert */}
       <ViewDesignationAlert
         isOpen={activeModal === 'view'}
         onClose={closeModal}
         designation={selectedDesignation}
       />
 
-      {/* Edit Designation Alert */}
       <EditDesignationAlert
         isOpen={activeModal === 'edit'}
         onClose={closeModal}
@@ -648,7 +521,6 @@ export default function EmployeeDesignationPage() {
         onSave={handleSaveEdit}
       />
 
-      {/* Delete Designation Alert */}
       <DeleteDesignationAlert
         isOpen={activeModal === 'delete'}
         onClose={closeModal}
@@ -658,4 +530,3 @@ export default function EmployeeDesignationPage() {
     </div>
   )
 }
-

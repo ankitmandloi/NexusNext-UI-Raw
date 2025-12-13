@@ -5,70 +5,30 @@ import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/
 import { Button } from '@/components/button'
 import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
+import Actions from '../common/components/Actions.jsx'
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
 } from '@/components/dropdown'
-import {
-  Pagination,
-  PaginationList,
-  PaginationNext,
-  PaginationPage,
-  PaginationPrevious,
-} from '@/components/pagination'
-import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
+import CommonPagination from '../common/components/Pagination.jsx'
 
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-/** City entity interface */
-export interface City {
-  id: number
-  name: string
-}
-
-/** Pincode entity interface - matches backend model */
-export interface Pincode {
-  id: number
-  cityId: number
-  cityName: string
-  pincode: string
-}
-
-/** Modal types for different actions */
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
+import { PlusIcon,  ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
 // CUSTOM ICONS
 // ============================================================================
 
 /** Custom delete/trash icon */
-function DeleteIcon({ className }: { className?: string }) {
-  return (
-    <svg 
-      width="16" 
-      height="16" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2"
-      className={className}
-    >
-      <polyline points="3,6 5,6 21,6"></polyline>
-      <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
-    </svg>
-  )
-}
+
 
 // ============================================================================
 // INITIAL DATA
 // ============================================================================
 
 // Sample city data
-const initialCities: City[] = [
+const initialCities = [
   { id: 1, name: 'Indore City' },
   { id: 2, name: 'Mhow' },
   { id: 3, name: 'Bhopal City' },
@@ -80,7 +40,7 @@ const initialCities: City[] = [
 ]
 
 // Sample pincode data
-const initialPincodes: Pincode[] = [
+const initialPincodes = [
   { id: 1, cityId: 1, cityName: 'Indore City', pincode: '452001' },
   { id: 2, cityId: 1, cityName: 'Indore City', pincode: '452002' },
   { id: 3, cityId: 2, cityName: 'Mhow', pincode: '453441' },
@@ -95,44 +55,7 @@ const initialPincodes: Pincode[] = [
 // COMPONENTS
 // ============================================================================
 
-function ActionButton({
-  children,
-  variant,
-  title,
-  onClick,
-}: {
-  children: React.ReactNode
-  variant: 'view' | 'edit' | 'delete'
-  title: string
-  onClick?: () => void
-}) {
-  const variantStyles = {
-    view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
-    edit: 'hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10',
-    delete: 'hover:text-red-600 hover:border-red-300 hover:bg-red-50 dark:hover:text-red-400 dark:hover:border-red-500/50 dark:hover:bg-red-500/10',
-  }
 
-  return (
-    <button
-      type="button"
-      title={title}
-      onClick={onClick}
-      className={`
-        inline-flex items-center justify-center
-        w-8 h-8 rounded-md
-        border border-zinc-200 dark:border-zinc-700
-        bg-white dark:bg-zinc-800
-        text-zinc-500 dark:text-zinc-400
-        transition-all duration-150 ease-in-out
-        hover:-translate-y-0.5
-        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900
-        ${variantStyles[variant]}
-      `}
-    >
-      {children}
-    </button>
-  )
-}
 
 // ============================================================================
 // VIEW ALERT COMPONENT
@@ -142,10 +65,6 @@ function ViewPincodeAlert({
   isOpen,
   onClose,
   pincode,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  pincode: Pincode | null
 }) {
   if (!pincode) return null
 
@@ -188,14 +107,8 @@ function EditPincodeAlert({
   pincode,
   cities,
   onSave,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  pincode: Pincode | null
-  cities: City[]
-  onSave: (id: number, cityId: number, cityName: string, pincodeValue: string) => void
 }) {
-  const [editedCityId, setEditedCityId] = useState<number>(0)
+  const [editedCityId, setEditedCityId] = useState(0)
   const [editedPincode, setEditedPincode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -299,13 +212,8 @@ function AddPincodeAlert({
   onClose,
   cities,
   onAdd,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  cities: City[]
-  onAdd: (cityId: number, cityName: string, pincodeValue: string) => void
 }) {
-  const [selectedCityId, setSelectedCityId] = useState<number>(0)
+  const [selectedCityId, setSelectedCityId] = useState(0)
   const [newPincode, setNewPincode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -409,11 +317,6 @@ function DeletePincodeAlert({
   onClose,
   pincode,
   onConfirm,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  pincode: Pincode | null
-  onConfirm: (id: number) => void
 }) {
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -459,12 +362,12 @@ function DeletePincodeAlert({
 
 export default function PincodePage() {
   // State management for the lists
-  const [pincodes, setPincodes] = useState<Pincode[]>(initialPincodes)
-  const [cities] = useState<City[]>(initialCities)
+  const [pincodes, setPincodes] = useState(initialPincodes)
+  const [cities] = useState(initialCities)
 
   // Modal state management
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedPincode, setSelectedPincode] = useState<Pincode | null>(null)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedPincode, setSelectedPincode] = useState(null)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -477,7 +380,7 @@ export default function PincodePage() {
   const currentPincodes = pincodes.slice(startIndex, endIndex)
 
   // Handle page change
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page) => {
     setCurrentPage(page)
   }
 
@@ -486,19 +389,19 @@ export default function PincodePage() {
   // ============================================================================
 
   /** Open view modal for a pincode */
-  const handleView = (pincode: Pincode) => {
+  const handleView = (pincode) => {
     setSelectedPincode(pincode)
     setActiveModal('view')
   }
 
   /** Open edit modal for a pincode */
-  const handleEdit = (pincode: Pincode) => {
+  const handleEdit = (pincode) => {
     setSelectedPincode(pincode)
     setActiveModal('edit')
   }
 
   /** Open delete confirmation modal for a pincode */
-  const handleDelete = (pincode: Pincode) => {
+  const handleDelete = (pincode) => {
     setSelectedPincode(pincode)
     setActiveModal('delete')
   }
@@ -548,10 +451,10 @@ export default function PincodePage() {
    * @param cityName - The name of the city
    * @param pincodeValue - The pincode value
    */
-  const handleAddPincode = (cityId: number, cityName: string, pincodeValue: string) => {
+  const handleAddPincode = (cityId, cityName, pincodeValue) => {
     // Generate a temporary ID (in production, this would come from the backend)
     const newId = pincodes.length > 0 ? Math.max(...pincodes.map(p => p.id)) + 1 : 1
-    const newPincode: Pincode = { id: newId, cityId, cityName, pincode: pincodeValue }
+    const newPincode = { id: newId, cityId, cityName, pincode: pincodeValue }
     setPincodes((prevPincodes) => [...prevPincodes, newPincode])
   }
 
@@ -562,7 +465,7 @@ export default function PincodePage() {
    * @param cityName - The new city name
    * @param pincodeValue - The new pincode value
    */
-  const handleSaveEdit = (id: number, cityId: number, cityName: string, pincodeValue: string) => {
+  const handleSaveEdit = (id, cityId, cityName, pincodeValue) => {
     setPincodes((prevPincodes) =>
       prevPincodes.map((pincode) =>
         pincode.id === id ? { ...pincode, cityId, cityName, pincode: pincodeValue } : pincode
@@ -574,7 +477,7 @@ export default function PincodePage() {
    * Delete a pincode from the list
    * @param id - The ID of the pincode to delete
    */
-  const handleConfirmDelete = (id: number) => {
+  const handleConfirmDelete = (id) => {
     setPincodes((prevPincodes) => prevPincodes.filter((pincode) => pincode.id !== id))
   }
 
@@ -659,68 +562,25 @@ export default function PincodePage() {
                 <div className="w-[30%] text-sm font-medium text-zinc-950 dark:text-white">
                   {pincode.pincode}
                 </div>
-                <div className="w-[20%] flex items-center justify-center gap-2">
-                  <ActionButton 
-                    variant="view" 
-                    title="View"
-                    onClick={() => handleView(pincode)}
-                  >
-                    <EyeIcon className="w-4 h-4" />
-                  </ActionButton>
-                  <ActionButton 
-                    variant="edit" 
-                    title="Edit"
-                    onClick={() => handleEdit(pincode)}
-                  >
-                    <PencilSquareIcon className="w-4 h-4" />
-                  </ActionButton>
-                  <ActionButton 
-                    variant="delete" 
-                    title="Delete"
-                    onClick={() => handleDelete(pincode)}
-                  >
-                    <DeleteIcon className="w-4 h-4" />
-                  </ActionButton>
+                <div className="w-[160px] px-4 flex items-center justify-center">
+                  <Actions
+                    onView={() => handleView(pincode)}
+                    onEdit={() => handleEdit(pincode)}
+                    onDelete={() => handleDelete(pincode)}
+                  />
                 </div>
+
               </div>
             ))
           )}
         </div>
 
         {/* Pagination Footer - Same height as header */}
-        <div className="flex items-center justify-center border-t border-zinc-950/5 dark:border-white/5 px-4 h-11 shrink-0">
-          <Pagination>
-            <button
-              onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-3 py-1 text-sm text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ← Previous
-            </button>
-            <PaginationList>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`px-3 py-1 mx-1 text-sm rounded ${
-                    page === currentPage
-                      ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900'
-                      : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-            </PaginationList>
-            <button
-              onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 text-sm text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next →
-            </button>
-          </Pagination>
-        </div>
+        <CommonPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
 
       {/* ================================================================== */}

@@ -5,62 +5,34 @@ import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/
 import { Button } from '@/components/button'
 import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
+import Actions from '../common/components/Actions'
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
 } from '@/components/dropdown'
-import {
-  Pagination,
-  PaginationList,
-} from '@/components/pagination'
-import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
+import CommonPagination from '../common/components/Pagination.jsx'
+
+import { PlusIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & INTERFACES
+// TYPES & INTERFACES (REMOVED FOR JSX)
 // ============================================================================
 
-export interface Region {
-  id: number
-  name: string
-}
-
-export interface Employee {
-  id: number
-  name: string
-}
-
-export interface RegionAssignment {
-  id: number
-  regionId: number
-  regionName: string
-  employeeId: number
-  employeeName: string
-}
-
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
-
+// ModalType removed (was 'view' | 'edit' | 'delete' | 'add' | null)
 const ITEMS_PER_PAGE = 10
 
 // ============================================================================
 // CUSTOM ICONS
 // ============================================================================
 
-function DeleteIcon({ className }: { className?: string }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-      <polyline points="3,6 5,6 21,6"></polyline>
-      <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
-    </svg>
-  )
-}
 
 // ============================================================================
 // INITIAL DATA
 // ============================================================================
 
-const initialRegions: Region[] = [
+const initialRegions = [
   { id: 1, name: 'North' },
   { id: 2, name: 'South' },
   { id: 3, name: 'East' },
@@ -68,7 +40,7 @@ const initialRegions: Region[] = [
   { id: 5, name: 'Central' },
 ]
 
-const initialEmployees: Employee[] = [
+const initialEmployees = [
   { id: 1, name: 'Rahul Sharma' },
   { id: 2, name: 'Priya Patel' },
   { id: 3, name: 'Amit Kumar' },
@@ -76,7 +48,7 @@ const initialEmployees: Employee[] = [
   { id: 5, name: 'Vikram Singh' },
 ]
 
-const initialAssignments: RegionAssignment[] = [
+const initialAssignments = [
   { id: 1, regionId: 1, regionName: 'North', employeeId: 1, employeeName: 'Rahul Sharma' },
   { id: 2, regionId: 2, regionName: 'South', employeeId: 2, employeeName: 'Priya Patel' },
   { id: 3, regionId: 3, regionName: 'East', employeeId: 3, employeeName: 'Amit Kumar' },
@@ -84,33 +56,24 @@ const initialAssignments: RegionAssignment[] = [
   { id: 5, regionId: 5, regionName: 'Central', employeeId: 5, employeeName: 'Vikram Singh' },
   { id: 6, regionId: 1, regionName: 'North', employeeId: 3, employeeName: 'Amit Kumar' },
   { id: 7, regionId: 2, regionName: 'South', employeeId: 5, employeeName: 'Vikram Singh' },
+  { id: 8, regionId: 3, regionName: 'East', employeeId: 1, employeeName: 'Rahul Sharma' },
+  { id: 9, regionId: 4, regionName: 'West', employeeId: 2, employeeName: 'Priya Patel' },
+  { id: 10, regionId: 5, regionName: 'Central', employeeId: 4, employeeName: 'Sneha Gupta' },
+  { id: 11, regionId: 1, regionName: 'North', employeeId: 2, employeeName: 'Priya Patel' },
+  { id: 12, regionId: 2, regionName: 'South', employeeId: 4, employeeName: 'Sneha Gupta' },
 ]
 
 // ============================================================================
 // ACTION BUTTON COMPONENT
 // ============================================================================
 
-function ActionButton({ children, variant, title, onClick }: { children: React.ReactNode; variant: 'view' | 'edit' | 'delete'; title: string; onClick?: () => void }) {
-  const variantStyles = {
-    view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
-    edit: 'hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10',
-    delete: 'hover:text-red-600 hover:border-red-300 hover:bg-red-50 dark:hover:text-red-400 dark:hover:border-red-500/50 dark:hover:bg-red-500/10',
-  }
 
-  return (
-    <button type="button" title={title} onClick={onClick}
-      className={`inline-flex items-center justify-center w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-all duration-150 ease-in-out hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 ${variantStyles[variant]}`}
-    >
-      {children}
-    </button>
-  )
-}
 
 // ============================================================================
 // MODAL COMPONENTS
 // ============================================================================
 
-function ViewAssignmentAlert({ isOpen, onClose, assignment }: { isOpen: boolean; onClose: () => void; assignment: RegionAssignment | null }) {
+function ViewAssignmentAlert({ isOpen, onClose, assignment }) {
   if (!assignment) return null
   return (
     <Alert open={isOpen} onClose={onClose}>
@@ -128,9 +91,9 @@ function ViewAssignmentAlert({ isOpen, onClose, assignment }: { isOpen: boolean;
   )
 }
 
-function EditAssignmentAlert({ isOpen, onClose, assignment, regions, employees, onSave }: { isOpen: boolean; onClose: () => void; assignment: RegionAssignment | null; regions: Region[]; employees: Employee[]; onSave: (id: number, regionId: number, regionName: string, employeeId: number, employeeName: string) => void }) {
-  const [editedRegionId, setEditedRegionId] = useState<number>(0)
-  const [editedEmployeeId, setEditedEmployeeId] = useState<number>(0)
+function EditAssignmentAlert({ isOpen, onClose, assignment, regions, employees, onSave }) {
+  const [editedRegionId, setEditedRegionId] = useState(0)
+  const [editedEmployeeId, setEditedEmployeeId] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -181,9 +144,9 @@ function EditAssignmentAlert({ isOpen, onClose, assignment, regions, employees, 
   )
 }
 
-function AddAssignmentAlert({ isOpen, onClose, regions, employees, onAdd }: { isOpen: boolean; onClose: () => void; regions: Region[]; employees: Employee[]; onAdd: (regionId: number, regionName: string, employeeId: number, employeeName: string) => void }) {
-  const [selectedRegionId, setSelectedRegionId] = useState<number>(0)
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number>(0)
+function AddAssignmentAlert({ isOpen, onClose, regions, employees, onAdd }) {
+  const [selectedRegionId, setSelectedRegionId] = useState(0)
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => { if (!isOpen) { setSelectedRegionId(0); setSelectedEmployeeId(0) } }, [isOpen])
@@ -228,7 +191,7 @@ function AddAssignmentAlert({ isOpen, onClose, regions, employees, onAdd }: { is
   )
 }
 
-function DeleteAssignmentAlert({ isOpen, onClose, assignment, onConfirm }: { isOpen: boolean; onClose: () => void; assignment: RegionAssignment | null; onConfirm: (id: number) => void }) {
+function DeleteAssignmentAlert({ isOpen, onClose, assignment, onConfirm }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const handleDelete = () => { if (!assignment) return; setIsDeleting(true); setTimeout(() => { onConfirm(assignment.id); setIsDeleting(false); onClose() }, 300) }
   if (!assignment) return null
@@ -250,21 +213,21 @@ function DeleteAssignmentAlert({ isOpen, onClose, assignment, onConfirm }: { isO
 // ============================================================================
 
 export default function RegionAssignmentPage() {
-  const [assignments, setAssignments] = useState<RegionAssignment[]>(initialAssignments)
-  const [regions] = useState<Region[]>(initialRegions)
-  const [employees] = useState<Employee[]>(initialEmployees)
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedAssignment, setSelectedAssignment] = useState<RegionAssignment | null>(null)
+  const [assignments, setAssignments] = useState(initialAssignments)
+  const [regions] = useState(initialRegions)
+  const [employees] = useState(initialEmployees)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedAssignment, setSelectedAssignment] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
 
   const totalPages = Math.max(1, Math.ceil(assignments.length / ITEMS_PER_PAGE))
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const currentAssignments = assignments.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  const handlePageChange = (page: number) => setCurrentPage(page)
-  const handleView = (a: RegionAssignment) => { setSelectedAssignment(a); setActiveModal('view') }
-  const handleEdit = (a: RegionAssignment) => { setSelectedAssignment(a); setActiveModal('edit') }
-  const handleDelete = (a: RegionAssignment) => { setSelectedAssignment(a); setActiveModal('delete') }
+  const handlePageChange = (page) => setCurrentPage(page)
+  const handleView = (a) => { setSelectedAssignment(a); setActiveModal('view') }
+  const handleEdit = (a) => { setSelectedAssignment(a); setActiveModal('edit') }
+  const handleDelete = (a) => { setSelectedAssignment(a); setActiveModal('delete') }
   const handleAddClick = () => setActiveModal('add')
   const closeModal = () => { setActiveModal(null); setSelectedAssignment(null) }
 
@@ -272,16 +235,16 @@ export default function RegionAssignmentPage() {
   const handleExportExcel = () => console.log('Export to Excel clicked')
   const handleDownloadFormat = () => console.log('Download Format clicked')
 
-  const handleAddAssignment = (regionId: number, regionName: string, employeeId: number, employeeName: string) => {
+  const handleAddAssignment = (regionId, regionName, employeeId, employeeName) => {
     const newId = assignments.length > 0 ? Math.max(...assignments.map(a => a.id)) + 1 : 1
     setAssignments(prev => [...prev, { id: newId, regionId, regionName, employeeId, employeeName }])
   }
 
-  const handleSaveEdit = (id: number, regionId: number, regionName: string, employeeId: number, employeeName: string) => {
+  const handleSaveEdit = (id, regionId, regionName, employeeId, employeeName) => {
     setAssignments(prev => prev.map(a => a.id === id ? { ...a, regionId, regionName, employeeId, employeeName } : a))
   }
 
-  const handleConfirmDelete = (id: number) => {
+  const handleConfirmDelete = (id) => {
     setAssignments(prev => prev.filter(a => a.id !== id))
   }
 
@@ -326,10 +289,12 @@ export default function RegionAssignmentPage() {
                     <div className="w-[100px] px-6 text-sm text-zinc-500 dark:text-zinc-400 tabular-nums text-center">{assignment.id}</div>
                     <div className="flex-1 px-4 text-sm font-medium text-zinc-950 dark:text-white text-center">{assignment.regionName}</div>
                     <div className="flex-1 px-4 text-sm font-medium text-zinc-950 dark:text-white text-center">{assignment.employeeName}</div>
-                    <div className="w-[160px] px-4 flex items-center justify-center gap-3">
-                      <ActionButton variant="view" title="View" onClick={() => handleView(assignment)}><EyeIcon className="w-4 h-4" /></ActionButton>
-                      <ActionButton variant="edit" title="Edit" onClick={() => handleEdit(assignment)}><PencilSquareIcon className="w-4 h-4" /></ActionButton>
-                      <ActionButton variant="delete" title="Delete" onClick={() => handleDelete(assignment)}><DeleteIcon className="w-4 h-4" /></ActionButton>
+                    <div className="w-[160px] px-4 flex items-center justify-center">
+                      <Actions
+                        onView={() => handleView(assignment)}
+                        onEdit={() => handleEdit(assignment)}
+                        onDelete={() => handleDelete(assignment)}
+                      />
                     </div>
                   </div>
                 ))
@@ -338,17 +303,12 @@ export default function RegionAssignmentPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center border-t border-zinc-950/5 dark:border-white/5 px-4 h-11 shrink-0">
-          <Pagination>
-            <button onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-1 text-sm text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">← Previous</button>
-            <PaginationList>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button key={page} onClick={() => handlePageChange(page)} className={`px-3 py-1 mx-1 text-sm rounded ${page === currentPage ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}>{page}</button>
-              ))}
-            </PaginationList>
-            <button onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-3 py-1 text-sm text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">Next →</button>
-          </Pagination>
-        </div>
+        <CommonPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+
       </div>
 
       <AddAssignmentAlert isOpen={activeModal === 'add'} onClose={closeModal} regions={regions} employees={employees} onAdd={handleAddAssignment} />

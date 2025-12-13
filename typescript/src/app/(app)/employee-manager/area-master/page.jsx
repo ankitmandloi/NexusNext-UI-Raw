@@ -18,34 +18,19 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & SAMPLE DATA
+// SAMPLE DATA
 // ============================================================================
-
-interface City {
-  id: number
-  name: string
-}
-
-interface Area {
-  id: number
-  cityId: number
-  cityName: string
-  areaName: string
-  areaCode: string
-}
-
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
 
 const ITEMS_PER_PAGE = 10
 
-const initialCities: City[] = [
+const initialCities = [
   { id: 1, name: 'Springfield' },
   { id: 2, name: 'Rivertown' },
   { id: 3, name: 'Lakeside' },
   { id: 4, name: 'Hillview' },
 ]
 
-const initialAreas: Area[] = [
+const initialAreas = [
   { id: 1, cityId: 1, cityName: 'Springfield', areaName: 'North End', areaCode: 'SP-N' },
   { id: 2, cityId: 1, cityName: 'Springfield', areaName: 'Downtown', areaCode: 'SP-D' },
   { id: 3, cityId: 2, cityName: 'Rivertown', areaName: 'Harbor', areaCode: 'RT-H' },
@@ -57,10 +42,10 @@ const initialAreas: Area[] = [
 ]
 
 // ============================================================================
-// ICONS / ACTION BUTTON
+// ICON / ACTION BUTTON
 // ============================================================================
 
-function DeleteIcon({ className }: { className?: string }) {
+function DeleteIcon({ className }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
       <polyline points="3,6 5,6 21,6"></polyline>
@@ -69,7 +54,7 @@ function DeleteIcon({ className }: { className?: string }) {
   )
 }
 
-function ActionButton({ children, variant, title, onClick }: { children: React.ReactNode; variant: 'view' | 'edit' | 'delete'; title: string; onClick?: () => void }) {
+function ActionButton({ children, variant, title, onClick }) {
   const variantStyles = {
     view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
     edit: 'hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10',
@@ -102,7 +87,7 @@ function ActionButton({ children, variant, title, onClick }: { children: React.R
 // MODALS
 // ============================================================================
 
-function ViewAreaAlert({ isOpen, onClose, area }: { isOpen: boolean; onClose: () => void; area: Area | null }) {
+function ViewAreaAlert({ isOpen, onClose, area }) {
   if (!area) return null
   return (
     <Alert open={isOpen} onClose={onClose}>
@@ -135,8 +120,8 @@ function ViewAreaAlert({ isOpen, onClose, area }: { isOpen: boolean; onClose: ()
   )
 }
 
-function EditAreaAlert({ isOpen, onClose, area, cities, onSave }: { isOpen: boolean; onClose: () => void; area: Area | null; cities: City[]; onSave: (id: number, cityId: number, cityName: string, areaName: string, areaCode: string) => void }) {
-  const [editedCityId, setEditedCityId] = useState<number>(0)
+function EditAreaAlert({ isOpen, onClose, area, cities, onSave }) {
+  const [editedCityId, setEditedCityId] = useState(0)
   const [editedAreaName, setEditedAreaName] = useState('')
   const [editedAreaCode, setEditedAreaCode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -206,8 +191,8 @@ function EditAreaAlert({ isOpen, onClose, area, cities, onSave }: { isOpen: bool
   )
 }
 
-function AddAreaAlert({ isOpen, onClose, cities, onAdd }: { isOpen: boolean; onClose: () => void; cities: City[]; onAdd: (cityId: number, cityName: string, areaName: string, areaCode: string) => void }) {
-  const [selectedCityId, setSelectedCityId] = useState<number>(0)
+function AddAreaAlert({ isOpen, onClose, cities, onAdd }) {
+  const [selectedCityId, setSelectedCityId] = useState(0)
   const [newAreaName, setNewAreaName] = useState('')
   const [newAreaCode, setNewAreaCode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -279,7 +264,7 @@ function AddAreaAlert({ isOpen, onClose, cities, onAdd }: { isOpen: boolean; onC
   )
 }
 
-function DeleteAreaAlert({ isOpen, onClose, area, onConfirm }: { isOpen: boolean; onClose: () => void; area: Area | null; onConfirm: (id: number) => void }) {
+function DeleteAreaAlert({ isOpen, onClose, area, onConfirm }) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = () => {
@@ -315,22 +300,22 @@ function DeleteAreaAlert({ isOpen, onClose, area, onConfirm }: { isOpen: boolean
 // ============================================================================
 
 export default function AreaMasterPage() {
-  const [areas, setAreas] = useState<Area[]>(initialAreas)
-  const [cities] = useState<City[]>(initialCities)
+  const [areas, setAreas] = useState(initialAreas)
+  const [cities] = useState(initialCities)
 
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedArea, setSelectedArea] = useState<Area | null>(null)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedArea, setSelectedArea] = useState(null)
 
   const [currentPage, setCurrentPage] = useState(1)
   const totalPages = Math.max(1, Math.ceil(areas.length / ITEMS_PER_PAGE))
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const currentItems = areas.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  const handlePageChange = (page: number) => setCurrentPage(page)
+  const handlePageChange = (page) => setCurrentPage(page)
 
-  const handleView = (a: Area) => { setSelectedArea(a); setActiveModal('view') }
-  const handleEdit = (a: Area) => { setSelectedArea(a); setActiveModal('edit') }
-  const handleDelete = (a: Area) => { setSelectedArea(a); setActiveModal('delete') }
+  const handleView = (a) => { setSelectedArea(a); setActiveModal('view') }
+  const handleEdit = (a) => { setSelectedArea(a); setActiveModal('edit') }
+  const handleDelete = (a) => { setSelectedArea(a); setActiveModal('delete') }
   const handleAddClick = () => setActiveModal('add')
   const closeModal = () => { setActiveModal(null); setSelectedArea(null) }
 
@@ -338,16 +323,16 @@ export default function AreaMasterPage() {
   const handleExportExcel = () => console.log('Export to Excel clicked')
   const handleDownloadFormat = () => console.log('Download Format clicked')
 
-  const handleAdd = (cityId: number, cityName: string, areaName: string, areaCode: string) => {
+  const handleAdd = (cityId, cityName, areaName, areaCode) => {
     const newId = areas.length > 0 ? Math.max(...areas.map(a => a.id)) + 1 : 1
     setAreas(prev => [...prev, { id: newId, cityId, cityName, areaName, areaCode }])
   }
 
-  const handleSaveEdit = (id: number, cityId: number, cityName: string, areaName: string, areaCode: string) => {
+  const handleSaveEdit = (id, cityId, cityName, areaName, areaCode) => {
     setAreas(prev => prev.map(a => a.id === id ? { ...a, cityId, cityName, areaName, areaCode } : a))
   }
 
-  const handleConfirmDelete = (id: number) => {
+  const handleConfirmDelete = (id) => {
     setAreas(prev => prev.filter(a => a.id !== id))
   }
 
@@ -393,7 +378,7 @@ export default function AreaMasterPage() {
           dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600"
         >
           <div className="min-w-[700px] flex flex-col h-full">
-            {/* Table Header - Fixed */}
+            {/* Table Header */}
             <div className="shrink-0 border-b border-zinc-950/10 dark:border-white/10 h-11 flex items-center bg-white dark:bg-zinc-900">
               <div className="w-[80px] px-6 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">ID</div>
               <div className="flex-1 px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Area Name</div>
@@ -402,7 +387,7 @@ export default function AreaMasterPage() {
               <div className="w-[160px] px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Actions</div>
             </div>
 
-            {/* Scrollable Table Body */}
+            {/* Scrollable Body */}
             <div className="flex-1 overflow-y-auto
               [&::-webkit-scrollbar]:w-1.5
               [&::-webkit-scrollbar-track]:bg-transparent
@@ -452,7 +437,7 @@ export default function AreaMasterPage() {
           </div>
         </div>
 
-        {/* Pagination Footer */}
+        {/* Pagination */}
         <div className="flex items-center justify-center border-t border-zinc-950/5 dark:border-white/5 px-4 h-11 shrink-0">
           <Pagination>
             <button
@@ -488,10 +473,7 @@ export default function AreaMasterPage() {
         </div>
       </div>
 
-      {/* ================================================================== */}
-      {/* ALERT MODALS */}
-      {/* ================================================================== */}
-
+      {/* MODALS */}
       <AddAreaAlert isOpen={activeModal === 'add'} onClose={closeModal} cities={cities} onAdd={handleAdd} />
       <ViewAreaAlert isOpen={activeModal === 'view'} onClose={closeModal} area={selectedArea} />
       <EditAreaAlert isOpen={activeModal === 'edit'} onClose={closeModal} area={selectedArea} cities={cities} onSave={handleSaveEdit} />
@@ -499,4 +481,3 @@ export default function AreaMasterPage() {
     </div>
   )
 }
-

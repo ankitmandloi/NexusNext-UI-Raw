@@ -21,24 +21,11 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-/** State entity interface - matches backend model */
-export interface State {
-  id: number
-  name: string
-}
-
-/** Modal types for different actions */
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
-
-// ============================================================================
 // CUSTOM ICONS
 // ============================================================================
 
 /** Custom delete/trash icon */
-function DeleteIcon({ className }: { className?: string }) {
+function DeleteIcon({ className }) {
   return (
     <svg 
       width="16" 
@@ -59,20 +46,28 @@ function DeleteIcon({ className }: { className?: string }) {
 // INITIAL DATA
 // ============================================================================
 
-// Sample state data - Replace with API call in production
-const initialStates: State[] = [
-  { id: 1, name: 'Madhya Pradesh' },
-  { id: 2, name: 'Maharashtra' },
-  { id: 3, name: 'Andaman and Nicobar' },
-  { id: 4, name: 'Andhra Pradesh' },
-  { id: 5, name: 'Assam' },
-  { id: 6, name: 'Bihar' },
-  { id: 7, name: 'Chhattisgarh' },
-  { id: 8, name: 'Goa' },
-  { id: 9, name: 'Gujarat' },
-  { id: 10, name: 'Haryana' },
-  { id: 11, name: 'Himachal Pradesh' },
-  { id: 12, name: 'Jharkhand' },
+// Sample city data
+const initialCities = [
+  { id: 1, name: 'Indore City' },
+  { id: 2, name: 'Mhow' },
+  { id: 3, name: 'Bhopal City' },
+  { id: 4, name: 'Raisen' },
+  { id: 5, name: 'Mumbai City' },
+  { id: 6, name: 'Thane' },
+  { id: 7, name: 'Pune City' },
+  { id: 8, name: 'Ahmedabad City' },
+]
+
+// Sample pincode data
+const initialPincodes = [
+  { id: 1, cityId: 1, cityName: 'Indore City', pincode: '452001' },
+  { id: 2, cityId: 1, cityName: 'Indore City', pincode: '452002' },
+  { id: 3, cityId: 2, cityName: 'Mhow', pincode: '453441' },
+  { id: 4, cityId: 3, cityName: 'Bhopal City', pincode: '462001' },
+  { id: 5, cityId: 3, cityName: 'Bhopal City', pincode: '462002' },
+  { id: 6, cityId: 5, cityName: 'Mumbai City', pincode: '400001' },
+  { id: 7, cityId: 5, cityName: 'Mumbai City', pincode: '400002' },
+  { id: 8, cityId: 7, cityName: 'Pune City', pincode: '411001' },
 ]
 
 // ============================================================================
@@ -84,11 +79,6 @@ function ActionButton({
   variant,
   title,
   onClick,
-}: {
-  children: React.ReactNode
-  variant: 'view' | 'edit' | 'delete'
-  title: string
-  onClick?: () => void
 }) {
   const variantStyles = {
     view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
@@ -122,32 +112,32 @@ function ActionButton({
 // VIEW ALERT COMPONENT
 // ============================================================================
 
-function ViewStateAlert({
+function ViewPincodeAlert({
   isOpen,
   onClose,
-  state,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  state: State | null
+  pincode,
 }) {
-  if (!state) return null
+  if (!pincode) return null
 
   return (
     <Alert open={isOpen} onClose={onClose}>
-      <AlertTitle>State Details</AlertTitle>
+      <AlertTitle>Pincode Details</AlertTitle>
       <AlertDescription>
-        View the details of the selected state below.
+        View the details of the selected pincode below.
       </AlertDescription>
       <AlertBody>
         <div className="space-y-3">
           <div className="flex gap-2">
             <span className="font-medium text-zinc-700 dark:text-zinc-300">ID:</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{state.id}</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{pincode.id}</span>
           </div>
           <div className="flex gap-2">
-            <span className="font-medium text-zinc-700 dark:text-zinc-300">State Name:</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{state.name}</span>
+            <span className="font-medium text-zinc-700 dark:text-zinc-300">City:</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{pincode.cityName}</span>
+          </div>
+          <div className="flex gap-2">
+            <span className="font-medium text-zinc-700 dark:text-zinc-300">Pin Code:</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{pincode.pincode}</span>
           </div>
         </div>
       </AlertBody>
@@ -162,48 +152,37 @@ function ViewStateAlert({
 // EDIT ALERT COMPONENT
 // ============================================================================
 
-function EditStateAlert({
+function EditPincodeAlert({
   isOpen,
   onClose,
-  state,
+  pincode,
+  cities,
   onSave,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  state: State | null
-  onSave: (id: number, newName: string) => void
 }) {
-  const [editedName, setEditedName] = useState('')
+  const [editedCityId, setEditedCityId] = useState(0)
+  const [editedPincode, setEditedPincode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Populate form when state changes
+  // Populate form when pincode changes
   useEffect(() => {
-    if (state && isOpen) {
-      setEditedName(state.name)
+    if (pincode && isOpen) {
+      setEditedCityId(pincode.cityId)
+      setEditedPincode(pincode.pincode)
     }
-  }, [state, isOpen])
+  }, [pincode, isOpen])
 
   // Handle save action
   const handleSave = async () => {
-    if (!state || !editedName.trim()) return
+    if (!pincode || !editedPincode.trim() || editedCityId === 0) return
 
     setIsSubmitting(true)
     
-    // TODO: Replace with actual API call
-    // Example:
-    // try {
-    //   await api.updateState(state.id, { name: editedName.trim() })
-    //   onSave(state.id, editedName.trim())
-    //   onClose()
-    // } catch (error) {
-    //   console.error('Failed to update state:', error)
-    // } finally {
-    //   setIsSubmitting(false)
-    // }
+    const selectedCity = cities.find(c => c.id === editedCityId)
+    const cityName = selectedCity?.name || ''
 
     // Simulating API call with timeout
     setTimeout(() => {
-      onSave(state.id, editedName.trim())
+      onSave(pincode.id, editedCityId, cityName, editedPincode.trim())
       setIsSubmitting(false)
       onClose()
     }, 300)
@@ -211,38 +190,63 @@ function EditStateAlert({
 
   // Handle cancel
   const handleCancel = () => {
-    setEditedName('')
+    setEditedCityId(0)
+    setEditedPincode('')
     onClose()
   }
 
-  if (!state) return null
+  if (!pincode) return null
 
   return (
     <Alert open={isOpen} onClose={handleCancel}>
-      <AlertTitle>Edit State</AlertTitle>
+      <AlertTitle>Edit Pincode</AlertTitle>
       <AlertDescription>
-        Update the state name below.
+        Update the pincode details below.
       </AlertDescription>
       <AlertBody>
-        <div className="space-y-2">
-          <label htmlFor="editStateName" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            State Name
-          </label>
-          <Input
-            id="editStateName"
-            type="text"
-            value={editedName}
-            onChange={(e) => setEditedName(e.target.value)}
-            placeholder="Enter state name"
-            autoFocus
-          />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="editCitySelect" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              City
+            </label>
+            <select
+              id="editCitySelect"
+              value={editedCityId}
+              onChange={(e) => setEditedCityId(parseInt(e.target.value))}
+              className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            >
+              <option value={0}>Select a city</option>
+              {cities.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="editPincode" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Pin Code
+            </label>
+            <Input
+              id="editPincode"
+              type="text"
+              value={editedPincode}
+              onChange={(e) => setEditedPincode(e.target.value)}
+              placeholder="Enter pin code"
+              autoFocus
+            />
+          </div>
         </div>
       </AlertBody>
       <AlertActions>
         <Button plain onClick={handleCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button color="dark/zinc" onClick={handleSave} disabled={!editedName.trim() || isSubmitting}>
+        <Button 
+          color="dark/zinc" 
+          onClick={handleSave} 
+          disabled={!editedPincode.trim() || editedCityId === 0 || isSubmitting}
+        >
           {isSubmitting ? 'Saving...' : 'Save'}
         </Button>
       </AlertActions>
@@ -251,87 +255,103 @@ function EditStateAlert({
 }
 
 // ============================================================================
-// ADD STATE ALERT COMPONENT
+// ADD PINCODE ALERT COMPONENT
 // ============================================================================
 
-function AddStateAlert({
+function AddPincodeAlert({
   isOpen,
   onClose,
+  cities,
   onAdd,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  onAdd: (name: string) => void
 }) {
-  const [newStateName, setNewStateName] = useState('')
+  const [selectedCityId, setSelectedCityId] = useState(0)
+  const [newPincode, setNewPincode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setNewStateName('')
+      setSelectedCityId(0)
+      setNewPincode('')
     }
   }, [isOpen])
 
   // Handle add action
   const handleAdd = async () => {
-    if (!newStateName.trim()) return
+    if (!newPincode.trim() || selectedCityId === 0) return
 
     setIsSubmitting(true)
     
-    // TODO: Replace with actual API call
-    // Example:
-    // try {
-    //   const response = await api.createState({ name: newStateName.trim() })
-    //   onAdd(response.data)
-    //   onClose()
-    // } catch (error) {
-    //   console.error('Failed to create state:', error)
-    // } finally {
-    //   setIsSubmitting(false)
-    // }
+    const selectedCity = cities.find(c => c.id === selectedCityId)
+    const cityName = selectedCity?.name || ''
 
     // Simulating API call with timeout
     setTimeout(() => {
-      onAdd(newStateName.trim())
+      onAdd(selectedCityId, cityName, newPincode.trim())
       setIsSubmitting(false)
-      setNewStateName('')
+      setSelectedCityId(0)
+      setNewPincode('')
       onClose()
     }, 300)
   }
 
   // Handle cancel
   const handleCancel = () => {
-    setNewStateName('')
+    setSelectedCityId(0)
+    setNewPincode('')
     onClose()
   }
 
   return (
     <Alert open={isOpen} onClose={handleCancel}>
-      <AlertTitle>Add New State</AlertTitle>
+      <AlertTitle>Add New Pincode</AlertTitle>
       <AlertDescription>
-        Enter the name of the new state below.
+        Enter the details of the new pincode below.
       </AlertDescription>
       <AlertBody>
-        <div className="space-y-2">
-          <label htmlFor="newStateName" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            State Name
-          </label>
-          <Input
-            id="newStateName"
-            type="text"
-            value={newStateName}
-            onChange={(e) => setNewStateName(e.target.value)}
-            placeholder="Enter state name"
-            autoFocus
-          />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="citySelect" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              City
+            </label>
+            <select
+              id="citySelect"
+              value={selectedCityId}
+              onChange={(e) => setSelectedCityId(parseInt(e.target.value))}
+              className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+              autoFocus
+            >
+              <option value={0}>Select a city</option>
+              {cities.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="newPincode" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Pin Code
+            </label>
+            <Input
+              id="newPincode"
+              type="text"
+              value={newPincode}
+              onChange={(e) => setNewPincode(e.target.value)}
+              placeholder="Enter pin code"
+            />
+          </div>
         </div>
       </AlertBody>
       <AlertActions>
         <Button plain onClick={handleCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button color="dark/zinc" onClick={handleAdd} disabled={!newStateName.trim() || isSubmitting}>
+        <Button 
+          color="dark/zinc" 
+          onClick={handleAdd} 
+          disabled={!newPincode.trim() || selectedCityId === 0 || isSubmitting}
+        >
           {isSubmitting ? 'Adding...' : 'Add'}
         </Button>
       </AlertActions>
@@ -343,52 +363,36 @@ function AddStateAlert({
 // DELETE ALERT COMPONENT
 // ============================================================================
 
-function DeleteStateAlert({
+function DeletePincodeAlert({
   isOpen,
   onClose,
-  state,
+  pincode,
   onConfirm,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  state: State | null
-  onConfirm: (id: number) => void
 }) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   // Handle delete confirmation
   const handleDelete = async () => {
-    if (!state) return
+    if (!pincode) return
 
     setIsDeleting(true)
 
-    // TODO: Replace with actual API call
-    // Example:
-    // try {
-    //   await api.deleteState(state.id)
-    //   onConfirm(state.id)
-    //   onClose()
-    // } catch (error) {
-    //   console.error('Failed to delete state:', error)
-    // } finally {
-    //   setIsDeleting(false)
-    // }
-
     // Simulating API call with timeout
     setTimeout(() => {
-      onConfirm(state.id)
+      onConfirm(pincode.id)
       setIsDeleting(false)
       onClose()
     }, 300)
   }
 
-  if (!state) return null
+  if (!pincode) return null
 
   return (
     <Alert open={isOpen} onClose={onClose}>
-      <AlertTitle>Are you sure you want to delete this state?</AlertTitle>
+      <AlertTitle>Are you sure you want to delete this pincode?</AlertTitle>
       <AlertDescription>
-        You are about to delete <strong className="text-zinc-900 dark:text-white">{state.name}</strong>. 
+        You are about to delete pincode <strong className="text-zinc-900 dark:text-white">{pincode.pincode}</strong> 
+        from <strong className="text-zinc-900 dark:text-white">{pincode.cityName}</strong>. 
         This action cannot be undone. All associated data will be permanently removed.
       </AlertDescription>
       <AlertActions>
@@ -407,26 +411,27 @@ function DeleteStateAlert({
 // MAIN PAGE COMPONENT
 // ============================================================================
 
-export default function StatePage() {
-  // State management for the list
-  const [states, setStates] = useState<State[]>(initialStates)
+export default function PincodePage() {
+  // State management for the lists
+  const [pincodes, setPincodes] = useState(initialPincodes)
+  const [cities] = useState(initialCities)
 
   // Modal state management
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedState, setSelectedState] = useState<State | null>(null)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedPincode, setSelectedPincode] = useState(null)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
   // Calculate pagination
-  const totalPages = Math.ceil(states.length / itemsPerPage)
+  const totalPages = Math.ceil(pincodes.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const currentStates = states.slice(startIndex, endIndex)
+  const currentPincodes = pincodes.slice(startIndex, endIndex)
 
   // Handle page change
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page) => {
     setCurrentPage(page)
   }
 
@@ -434,25 +439,25 @@ export default function StatePage() {
   // ACTION HANDLERS
   // ============================================================================
 
-  /** Open view modal for a state */
-  const handleView = (state: State) => {
-    setSelectedState(state)
+  /** Open view modal for a pincode */
+  const handleView = (pincode) => {
+    setSelectedPincode(pincode)
     setActiveModal('view')
   }
 
-  /** Open edit modal for a state */
-  const handleEdit = (state: State) => {
-    setSelectedState(state)
+  /** Open edit modal for a pincode */
+  const handleEdit = (pincode) => {
+    setSelectedPincode(pincode)
     setActiveModal('edit')
   }
 
-  /** Open delete confirmation modal for a state */
-  const handleDelete = (state: State) => {
-    setSelectedState(state)
+  /** Open delete confirmation modal for a pincode */
+  const handleDelete = (pincode) => {
+    setSelectedPincode(pincode)
     setActiveModal('delete')
   }
 
-  /** Open add state modal */
+  /** Open add pincode modal */
   const handleAddClick = () => {
     setActiveModal('add')
   }
@@ -460,7 +465,7 @@ export default function StatePage() {
   /** Close all modals */
   const closeModal = () => {
     setActiveModal(null)
-    setSelectedState(null)
+    setSelectedPincode(null)
   }
 
   // ============================================================================
@@ -473,20 +478,6 @@ export default function StatePage() {
    */
   const handleImportExcel = () => {
     console.log('Import from Excel clicked')
-    // TODO: Implement file upload logic
-    // Example:
-    // const input = document.createElement('input')
-    // input.type = 'file'
-    // input.accept = '.xlsx, .xls'
-    // input.onchange = async (e) => {
-    //   const file = (e.target as HTMLInputElement).files?.[0]
-    //   if (file) {
-    //     const formData = new FormData()
-    //     formData.append('file', file)
-    //     await api.importStates(formData)
-    //   }
-    // }
-    // input.click()
   }
 
   /**
@@ -495,15 +486,6 @@ export default function StatePage() {
    */
   const handleExportExcel = () => {
     console.log('Export to Excel clicked')
-    // TODO: Implement export logic
-    // Example:
-    // const response = await api.exportStates()
-    // const blob = await response.blob()
-    // const url = window.URL.createObjectURL(blob)
-    // const a = document.createElement('a')
-    // a.href = url
-    // a.download = 'states.xlsx'
-    // a.click()
   }
 
   /**
@@ -512,87 +494,42 @@ export default function StatePage() {
    */
   const handleDownloadFormat = () => {
     console.log('Download Format clicked')
-    // TODO: Implement format download logic
-    // Example:
-    // const response = await api.downloadStateTemplate()
-    // const blob = await response.blob()
-    // const url = window.URL.createObjectURL(blob)
-    // const a = document.createElement('a')
-    // a.href = url
-    // a.download = 'state_template.xlsx'
-    // a.click()
   }
 
   /**
-   * Add a new state to the list
-   * @param name - The name of the new state
-   * 
-   * TODO: Integrate with backend API
-   * Example implementation:
-   * const addState = async (name: string) => {
-   *   const response = await fetch('/api/states', {
-   *     method: 'POST',
-   *     headers: { 'Content-Type': 'application/json' },
-   *     body: JSON.stringify({ name })
-   *   })
-   *   if (response.ok) {
-   *     const newState = await response.json()
-   *     setStates(prev => [...prev, newState])
-   *   }
-   * }
+   * Add a new pincode to the list
+   * @param cityId - The ID of the city
+   * @param cityName - The name of the city
+   * @param pincodeValue - The pincode value
    */
-  const handleAddState = (name: string) => {
+  const handleAddPincode = (cityId, cityName, pincodeValue) => {
     // Generate a temporary ID (in production, this would come from the backend)
-    const newId = states.length > 0 ? Math.max(...states.map(s => s.id)) + 1 : 1
-    const newState: State = { id: newId, name }
-    setStates((prevStates) => [...prevStates, newState])
+    const newId = pincodes.length > 0 ? Math.max(...pincodes.map(p => p.id)) + 1 : 1
+    const newPincode = { id: newId, cityId, cityName, pincode: pincodeValue }
+    setPincodes((prevPincodes) => [...prevPincodes, newPincode])
   }
 
   /**
-   * Update a state in the list
-   * @param id - The ID of the state to update
-   * @param newName - The new name for the state
-   * 
-   * TODO: Integrate with backend API
-   * Example implementation:
-   * const updateState = async (id: number, newName: string) => {
-   *   const response = await fetch(`/api/states/${id}`, {
-   *     method: 'PUT',
-   *     headers: { 'Content-Type': 'application/json' },
-   *     body: JSON.stringify({ name: newName })
-   *   })
-   *   if (response.ok) {
-   *     // Update local state after successful API call
-   *     setStates(prev => prev.map(s => s.id === id ? { ...s, name: newName } : s))
-   *   }
-   * }
+   * Update a pincode in the list
+   * @param id - The ID of the pincode to update
+   * @param cityId - The new city ID
+   * @param cityName - The new city name
+   * @param pincodeValue - The new pincode value
    */
-  const handleSaveEdit = (id: number, newName: string) => {
-    setStates((prevStates) =>
-      prevStates.map((state) =>
-        state.id === id ? { ...state, name: newName } : state
+  const handleSaveEdit = (id, cityId, cityName, pincodeValue) => {
+    setPincodes((prevPincodes) =>
+      prevPincodes.map((pincode) =>
+        pincode.id === id ? { ...pincode, cityId, cityName, pincode: pincodeValue } : pincode
       )
     )
   }
 
   /**
-   * Delete a state from the list
-   * @param id - The ID of the state to delete
-   * 
-   * TODO: Integrate with backend API
-   * Example implementation:
-   * const deleteState = async (id: number) => {
-   *   const response = await fetch(`/api/states/${id}`, {
-   *     method: 'DELETE'
-   *   })
-   *   if (response.ok) {
-   *     // Remove from local state after successful API call
-   *     setStates(prev => prev.filter(s => s.id !== id))
-   *   }
-   * }
+   * Delete a pincode from the list
+   * @param id - The ID of the pincode to delete
    */
-  const handleConfirmDelete = (id: number) => {
-    setStates((prevStates) => prevStates.filter((state) => state.id !== id))
+  const handleConfirmDelete = (id) => {
+    setPincodes((prevPincodes) => prevPincodes.filter((pincode) => pincode.id !== id))
   }
 
   // ============================================================================
@@ -600,14 +537,14 @@ export default function StatePage() {
   // ============================================================================
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col" style={{ height: 'calc(100vh - 110px)' }}>
       {/* Header - Sticky */}
       <div className="sticky top-0 z-20 bg-white dark:bg-zinc-900 pb-4 shrink-0">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="max-sm:w-full sm:flex-1">
-            <Heading>States</Heading>
+            <Heading>Pincodes</Heading>
             <div className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              Manage all states in the system
+              Manage all pincodes in the system
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -630,7 +567,7 @@ export default function StatePage() {
             </Dropdown>
             <Button color="dark/zinc" onClick={handleAddClick}>
               <PlusIcon />
-              Add State
+              Add Pincode
             </Button>
           </div>
         </div>
@@ -640,9 +577,10 @@ export default function StatePage() {
       <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
         {/* Table Header - Fixed */}
         <div className="shrink-0 border-b border-zinc-950/10 dark:border-white/10 h-11 flex items-center bg-white dark:bg-zinc-900">
-          <div className="w-[15%] pl-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">ID</div>
-          <div className="w-[55%] text-sm font-medium text-zinc-500 dark:text-zinc-400">State Name</div>
-          <div className="w-[30%] text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Actions</div>
+          <div className="w-[10%] pl-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">ID</div>
+          <div className="w-[40%] text-sm font-medium text-zinc-500 dark:text-zinc-400">City</div>
+          <div className="w-[30%] text-sm font-medium text-zinc-500 dark:text-zinc-400">Pin Code</div>
+          <div className="w-[20%] text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Actions</div>
         </div>
 
         {/* Scrollable Table Body */}
@@ -654,43 +592,46 @@ export default function StatePage() {
           [&::-webkit-scrollbar-thumb]:rounded-full
           dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600"
         >
-          {states.length === 0 ? (
+          {pincodes.length === 0 ? (
             <div className="flex items-center justify-center py-12 text-zinc-500 dark:text-zinc-400">
-              No states found. Click "Add State" to create one.
+              No pincodes found. Click "Add Pincode" to create one.
             </div>
           ) : (
-            currentStates.map((state, index) => (
+            currentPincodes.map((pincode, index) => (
               <div 
-                key={state.id} 
+                key={pincode.id} 
                 className={`flex items-center py-[1.1rem] border-b border-zinc-950/5 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${
-                  index === currentStates.length - 1 ? 'border-b-0' : ''
+                  index === currentPincodes.length - 1 ? 'border-b-0' : ''
                 }`}
               >
-                <div className="w-[15%] pl-6 text-sm text-zinc-500 dark:text-zinc-400 tabular-nums">
-                  {state.id}
+                <div className="w-[10%] pl-6 text-sm text-zinc-500 dark:text-zinc-400 tabular-nums">
+                  {pincode.id}
                 </div>
-                <div className="w-[55%] text-sm font-medium text-zinc-950 dark:text-white">
-                  {state.name}
+                <div className="w-[40%] text-sm font-medium text-zinc-950 dark:text-white">
+                  {pincode.cityName}
                 </div>
-                <div className="w-[30%] flex items-center justify-center gap-2">
+                <div className="w-[30%] text-sm font-medium text-zinc-950 dark:text-white">
+                  {pincode.pincode}
+                </div>
+                <div className="w-[20%] flex items-center justify-center gap-2">
                   <ActionButton 
                     variant="view" 
                     title="View"
-                    onClick={() => handleView(state)}
+                    onClick={() => handleView(pincode)}
                   >
                     <EyeIcon className="w-4 h-4" />
                   </ActionButton>
                   <ActionButton 
                     variant="edit" 
                     title="Edit"
-                    onClick={() => handleEdit(state)}
+                    onClick={() => handleEdit(pincode)}
                   >
                     <PencilSquareIcon className="w-4 h-4" />
                   </ActionButton>
                   <ActionButton 
                     variant="delete" 
                     title="Delete"
-                    onClick={() => handleDelete(state)}
+                    onClick={() => handleDelete(pincode)}
                   >
                     <DeleteIcon className="w-4 h-4" />
                   </ActionButton>
@@ -740,33 +681,35 @@ export default function StatePage() {
       {/* ALERT MODALS */}
       {/* ================================================================== */}
 
-      {/* Add State Alert */}
-      <AddStateAlert
+      {/* Add Pincode Alert */}
+      <AddPincodeAlert
         isOpen={activeModal === 'add'}
         onClose={closeModal}
-        onAdd={handleAddState}
+        cities={cities}
+        onAdd={handleAddPincode}
       />
 
-      {/* View State Alert */}
-      <ViewStateAlert
+      {/* View Pincode Alert */}
+      <ViewPincodeAlert
         isOpen={activeModal === 'view'}
         onClose={closeModal}
-        state={selectedState}
+        pincode={selectedPincode}
       />
 
-      {/* Edit State Alert */}
-      <EditStateAlert
+      {/* Edit Pincode Alert */}
+      <EditPincodeAlert
         isOpen={activeModal === 'edit'}
         onClose={closeModal}
-        state={selectedState}
+        pincode={selectedPincode}
+        cities={cities}
         onSave={handleSaveEdit}
       />
 
-      {/* Delete State Alert */}
-      <DeleteStateAlert
+      {/* Delete Pincode Alert */}
+      <DeletePincodeAlert
         isOpen={activeModal === 'delete'}
         onClose={closeModal}
-        state={selectedState}
+        pincode={selectedPincode}
         onConfirm={handleConfirmDelete}
       />
     </div>

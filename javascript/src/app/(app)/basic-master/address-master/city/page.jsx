@@ -18,27 +18,6 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-/** District entity interface */
-export interface District {
-  id: number
-  name: string
-}
-
-/** City entity interface - matches backend model */
-export interface City {
-  id: number
-  districtId: number
-  districtName: string
-  cityName: string
-}
-
-/** Modal types for different actions */
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
-
-// ============================================================================
 // CONSTANTS
 // ============================================================================
 
@@ -49,7 +28,7 @@ const ITEMS_PER_PAGE = 10
 // ============================================================================
 
 /** Custom delete/trash icon */
-function DeleteIcon({ className }: { className?: string }) {
+function DeleteIcon({ className }) {
   return (
     <svg 
       width="16" 
@@ -71,7 +50,7 @@ function DeleteIcon({ className }: { className?: string }) {
 // ============================================================================
 
 // Sample district data
-const initialDistricts: District[] = [
+const initialDistricts = [
   { id: 1, name: 'Indore' },
   { id: 2, name: 'Bhopal' },
   { id: 3, name: 'Gwalior' },
@@ -83,7 +62,7 @@ const initialDistricts: District[] = [
 ]
 
 // Sample city data
-const initialCities: City[] = [
+const initialCities = [
   { id: 1, districtId: 1, districtName: 'Indore', cityName: 'Indore City' },
   { id: 2, districtId: 1, districtName: 'Indore', cityName: 'Mhow' },
   { id: 3, districtId: 2, districtName: 'Bhopal', cityName: 'Bhopal City' },
@@ -103,11 +82,6 @@ function ActionButton({
   variant,
   title,
   onClick,
-}: {
-  children: React.ReactNode
-  variant: 'view' | 'edit' | 'delete'
-  title: string
-  onClick?: () => void
 }) {
   const variantStyles = {
     view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
@@ -145,10 +119,6 @@ function ViewCityAlert({
   isOpen,
   onClose,
   city,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  city: City | null
 }) {
   if (!city) return null
 
@@ -191,14 +161,8 @@ function EditCityAlert({
   city,
   districts,
   onSave,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  city: City | null
-  districts: District[]
-  onSave: (id: number, districtId: number, districtName: string, cityName: string) => void
 }) {
-  const [editedDistrictId, setEditedDistrictId] = useState<number>(0)
+  const [editedDistrictId, setEditedDistrictId] = useState(0)
   const [editedCityName, setEditedCityName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -302,13 +266,8 @@ function AddCityAlert({
   onClose,
   districts,
   onAdd,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  districts: District[]
-  onAdd: (districtId: number, districtName: string, cityName: string) => void
 }) {
-  const [selectedDistrictId, setSelectedDistrictId] = useState<number>(0)
+  const [selectedDistrictId, setSelectedDistrictId] = useState(0)
   const [newCityName, setNewCityName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -412,11 +371,6 @@ function DeleteCityAlert({
   onClose,
   city,
   onConfirm,
-}: {
-  isOpen: boolean
-  onClose: () => void
-  city: City | null
-  onConfirm: (id: number) => void
 }) {
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -462,12 +416,12 @@ function DeleteCityAlert({
 
 export default function CityPage() {
   // State management for the lists
-  const [cities, setCities] = useState<City[]>(initialCities)
-  const [districts] = useState<District[]>(initialDistricts)
+  const [cities, setCities] = useState(initialCities)
+  const [districts] = useState(initialDistricts)
 
   // Modal state management
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedCity, setSelectedCity] = useState<City | null>(null)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedCity, setSelectedCity] = useState(null)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -479,7 +433,7 @@ export default function CityPage() {
   const currentCities = cities.slice(startIndex, endIndex)
 
   // Handle page change
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page) => {
     setCurrentPage(page)
   }
 
@@ -488,19 +442,19 @@ export default function CityPage() {
   // ============================================================================
 
   /** Open view modal for a city */
-  const handleView = (city: City) => {
+  const handleView = (city) => {
     setSelectedCity(city)
     setActiveModal('view')
   }
 
   /** Open edit modal for a city */
-  const handleEdit = (city: City) => {
+  const handleEdit = (city) => {
     setSelectedCity(city)
     setActiveModal('edit')
   }
 
   /** Open delete confirmation modal for a city */
-  const handleDelete = (city: City) => {
+  const handleDelete = (city) => {
     setSelectedCity(city)
     setActiveModal('delete')
   }
@@ -524,13 +478,13 @@ export default function CityPage() {
   const handleExportExcel = () => console.log('Export to Excel clicked')
   const handleDownloadFormat = () => console.log('Download Format clicked')
 
-  const handleAddCity = (districtId: number, districtName: string, cityName: string) => {
+  const handleAddCity = (districtId, districtName, cityName) => {
     const newId = cities.length > 0 ? Math.max(...cities.map(c => c.id)) + 1 : 1
-    const newCity: City = { id: newId, districtId, districtName, cityName }
+    const newCity = { id: newId, districtId, districtName, cityName }
     setCities((prevCities) => [...prevCities, newCity])
   }
 
-  const handleSaveEdit = (id: number, districtId: number, districtName: string, cityName: string) => {
+  const handleSaveEdit = (id, districtId, districtName, cityName) => {
     setCities((prevCities) =>
       prevCities.map((city) =>
         city.id === id ? { ...city, districtId, districtName, cityName } : city
@@ -538,7 +492,7 @@ export default function CityPage() {
     )
   }
 
-  const handleConfirmDelete = (id: number) => {
+  const handleConfirmDelete = (id) => {
     setCities((prevCities) => prevCities.filter((city) => city.id !== id))
   }
 
@@ -735,4 +689,3 @@ export default function CityPage() {
     </div>
   )
 }
-

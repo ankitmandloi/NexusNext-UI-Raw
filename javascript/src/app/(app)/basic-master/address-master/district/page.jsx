@@ -18,22 +18,8 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & INTERFACES
+// CONSTANTS
 // ============================================================================
-
-export interface State {
-  id: number
-  name: string
-}
-
-export interface District {
-  id: number
-  stateId: number
-  stateName: string
-  districtName: string
-}
-
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
 
 const ITEMS_PER_PAGE = 10
 
@@ -41,7 +27,7 @@ const ITEMS_PER_PAGE = 10
 // CUSTOM ICONS
 // ============================================================================
 
-function DeleteIcon({ className }: { className?: string }) {
+function DeleteIcon({ className }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
       <polyline points="3,6 5,6 21,6"></polyline>
@@ -54,14 +40,14 @@ function DeleteIcon({ className }: { className?: string }) {
 // INITIAL DATA
 // ============================================================================
 
-const initialStates: State[] = [
+const initialStates = [
   { id: 1, name: 'Madhya Pradesh' },
   { id: 2, name: 'Maharashtra' },
   { id: 3, name: 'Gujarat' },
   { id: 4, name: 'Rajasthan' },
 ]
 
-const initialDistricts: District[] = [
+const initialDistricts = [
   { id: 1, stateId: 1, stateName: 'Madhya Pradesh', districtName: 'Indore' },
   { id: 2, stateId: 1, stateName: 'Madhya Pradesh', districtName: 'Bhopal' },
   { id: 3, stateId: 1, stateName: 'Madhya Pradesh', districtName: 'Gwalior' },
@@ -76,7 +62,7 @@ const initialDistricts: District[] = [
 // ACTION BUTTON COMPONENT
 // ============================================================================
 
-function ActionButton({ children, variant, title, onClick }: { children: React.ReactNode; variant: 'view' | 'edit' | 'delete'; title: string; onClick?: () => void }) {
+function ActionButton({ children, variant, title, onClick }) {
   const variantStyles = {
     view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
     edit: 'hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10',
@@ -96,7 +82,7 @@ function ActionButton({ children, variant, title, onClick }: { children: React.R
 // MODAL COMPONENTS
 // ============================================================================
 
-function ViewDistrictAlert({ isOpen, onClose, district }: { isOpen: boolean; onClose: () => void; district: District | null }) {
+function ViewDistrictAlert({ isOpen, onClose, district }) {
   if (!district) return null
   return (
     <Alert open={isOpen} onClose={onClose}>
@@ -114,8 +100,8 @@ function ViewDistrictAlert({ isOpen, onClose, district }: { isOpen: boolean; onC
   )
 }
 
-function EditDistrictAlert({ isOpen, onClose, district, states, onSave }: { isOpen: boolean; onClose: () => void; district: District | null; states: State[]; onSave: (id: number, stateId: number, stateName: string, districtName: string) => void }) {
-  const [editedStateId, setEditedStateId] = useState<number>(0)
+function EditDistrictAlert({ isOpen, onClose, district, states, onSave }) {
+  const [editedStateId, setEditedStateId] = useState(0)
   const [editedDistrictName, setEditedDistrictName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -163,8 +149,8 @@ function EditDistrictAlert({ isOpen, onClose, district, states, onSave }: { isOp
   )
 }
 
-function AddDistrictAlert({ isOpen, onClose, states, onAdd }: { isOpen: boolean; onClose: () => void; states: State[]; onAdd: (stateId: number, stateName: string, districtName: string) => void }) {
-  const [selectedStateId, setSelectedStateId] = useState<number>(0)
+function AddDistrictAlert({ isOpen, onClose, states, onAdd }) {
+  const [selectedStateId, setSelectedStateId] = useState(0)
   const [newDistrictName, setNewDistrictName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -206,7 +192,7 @@ function AddDistrictAlert({ isOpen, onClose, states, onAdd }: { isOpen: boolean;
   )
 }
 
-function DeleteDistrictAlert({ isOpen, onClose, district, onConfirm }: { isOpen: boolean; onClose: () => void; district: District | null; onConfirm: (id: number) => void }) {
+function DeleteDistrictAlert({ isOpen, onClose, district, onConfirm }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const handleDelete = () => { if (!district) return; setIsDeleting(true); setTimeout(() => { onConfirm(district.id); setIsDeleting(false); onClose() }, 300) }
   if (!district) return null
@@ -228,20 +214,20 @@ function DeleteDistrictAlert({ isOpen, onClose, district, onConfirm }: { isOpen:
 // ============================================================================
 
 export default function DistrictPage() {
-  const [districts, setDistricts] = useState<District[]>(initialDistricts)
-  const [states] = useState<State[]>(initialStates)
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null)
+  const [districts, setDistricts] = useState(initialDistricts)
+  const [states] = useState(initialStates)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedDistrict, setSelectedDistrict] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
 
   const totalPages = Math.max(1, Math.ceil(districts.length / ITEMS_PER_PAGE))
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const currentDistricts = districts.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  const handlePageChange = (page: number) => setCurrentPage(page)
-  const handleView = (d: District) => { setSelectedDistrict(d); setActiveModal('view') }
-  const handleEdit = (d: District) => { setSelectedDistrict(d); setActiveModal('edit') }
-  const handleDelete = (d: District) => { setSelectedDistrict(d); setActiveModal('delete') }
+  const handlePageChange = (page) => setCurrentPage(page)
+  const handleView = (d) => { setSelectedDistrict(d); setActiveModal('view') }
+  const handleEdit = (d) => { setSelectedDistrict(d); setActiveModal('edit') }
+  const handleDelete = (d) => { setSelectedDistrict(d); setActiveModal('delete') }
   const handleAddClick = () => setActiveModal('add')
   const closeModal = () => { setActiveModal(null); setSelectedDistrict(null) }
 
@@ -249,16 +235,16 @@ export default function DistrictPage() {
   const handleExportExcel = () => console.log('Export to Excel clicked')
   const handleDownloadFormat = () => console.log('Download Format clicked')
 
-  const handleAddDistrict = (stateId: number, stateName: string, districtName: string) => {
+  const handleAddDistrict = (stateId, stateName, districtName) => {
     const newId = districts.length > 0 ? Math.max(...districts.map(d => d.id)) + 1 : 1
     setDistricts(prev => [...prev, { id: newId, stateId, stateName, districtName }])
   }
 
-  const handleSaveEdit = (id: number, stateId: number, stateName: string, districtName: string) => {
+  const handleSaveEdit = (id, stateId, stateName, districtName) => {
     setDistricts(prev => prev.map(d => d.id === id ? { ...d, stateId, stateName, districtName } : d))
   }
 
-  const handleConfirmDelete = (id: number) => {
+  const handleConfirmDelete = (id) => {
     setDistricts(prev => prev.filter(d => d.id !== id))
   }
 

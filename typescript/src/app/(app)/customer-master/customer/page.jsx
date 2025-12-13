@@ -18,55 +18,19 @@ import {
 import { PlusIcon, EyeIcon, PencilSquareIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
 // ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-export interface CustomerType {
-  id: number
-  name: string
-}
-
-export interface Customer {
-  id: number
-  customerName: string
-  customerCode: string
-  customerTypeId: number
-  customerTypeName: string
-  mobile: string
-  email: string
-  address: string
-  status: 'Active' | 'Inactive'
-}
-
-type ModalType = 'view' | 'edit' | 'delete' | 'add' | null
-
-const ITEMS_PER_PAGE = 10
-
-// ============================================================================
-// CUSTOM ICONS
-// ============================================================================
-
-function DeleteIcon({ className }: { className?: string }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-      <polyline points="3,6 5,6 21,6"></polyline>
-      <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
-    </svg>
-  )
-}
-
-// ============================================================================
 // INITIAL DATA
 // ============================================================================
 
-const initialCustomerTypes: CustomerType[] = [
+const ITEMS_PER_PAGE = 10
+
+const initialCustomerTypes = [
   { id: 1, name: 'Retailer' },
   { id: 2, name: 'Wholesaler' },
   { id: 3, name: 'Distributor' },
   { id: 4, name: 'End Customer' },
 ]
 
-const initialCustomers: Customer[] = [
+const initialCustomers = [
   { id: 1, customerName: 'ABC Retail Store', customerCode: 'CUST001', customerTypeId: 1, customerTypeName: 'Retailer', mobile: '9876543210', email: 'abc@retail.com', address: 'Mumbai, Maharashtra', status: 'Active' },
   { id: 2, customerName: 'XYZ Wholesale', customerCode: 'CUST002', customerTypeId: 2, customerTypeName: 'Wholesaler', mobile: '9876543211', email: 'xyz@wholesale.com', address: 'Delhi, NCR', status: 'Active' },
   { id: 3, customerName: 'Global Distributors', customerCode: 'CUST003', customerTypeId: 3, customerTypeName: 'Distributor', mobile: '9876543212', email: 'global@dist.com', address: 'Bangalore, Karnataka', status: 'Active' },
@@ -77,10 +41,23 @@ const initialCustomers: Customer[] = [
 ]
 
 // ============================================================================
+// CUSTOM ICONS
+// ============================================================================
+
+function DeleteIcon({ className }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <polyline points="3,6 5,6 21,6"></polyline>
+      <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+    </svg>
+  )
+}
+
+// ============================================================================
 // ACTION BUTTON COMPONENT
 // ============================================================================
 
-function ActionButton({ children, variant, title, onClick }: { children: React.ReactNode; variant: 'view' | 'edit' | 'delete'; title: string; onClick?: () => void }) {
+function ActionButton({ children, variant, title, onClick }) {
   const variantStyles = {
     view: 'hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-blue-500/10',
     edit: 'hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10',
@@ -100,7 +77,7 @@ function ActionButton({ children, variant, title, onClick }: { children: React.R
 // MODAL COMPONENTS
 // ============================================================================
 
-function ViewCustomerAlert({ isOpen, onClose, customer }: { isOpen: boolean; onClose: () => void; customer: Customer | null }) {
+function ViewCustomerAlert({ isOpen, onClose, customer }) {
   if (!customer) return null
   return (
     <Alert open={isOpen} onClose={onClose}>
@@ -125,8 +102,8 @@ function ViewCustomerAlert({ isOpen, onClose, customer }: { isOpen: boolean; onC
   )
 }
 
-function EditCustomerAlert({ isOpen, onClose, customer, customerTypes, onSave }: { isOpen: boolean; onClose: () => void; customer: Customer | null; customerTypes: CustomerType[]; onSave: (customer: Customer) => void }) {
-  const [formData, setFormData] = useState<Partial<Customer>>({})
+function EditCustomerAlert({ isOpen, onClose, customer, customerTypes, onSave }) {
+  const [formData, setFormData] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -140,7 +117,7 @@ function EditCustomerAlert({ isOpen, onClose, customer, customerTypes, onSave }:
     setIsSubmitting(true)
     const customerTypeName = customerTypes.find(t => t.id === formData.customerTypeId)?.name || ''
     setTimeout(() => { 
-      onSave({ ...customer, ...formData, customerTypeName } as Customer)
+      onSave({ ...customer, ...formData, customerTypeName })
       setIsSubmitting(false)
       onClose() 
     }, 300)
@@ -181,7 +158,7 @@ function EditCustomerAlert({ isOpen, onClose, customer, customerTypes, onSave }:
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Status</label>
-              <select value={formData.status || 'Active'} onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as 'Active' | 'Inactive' }))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <select value={formData.status || 'Active'} onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
@@ -201,8 +178,8 @@ function EditCustomerAlert({ isOpen, onClose, customer, customerTypes, onSave }:
   )
 }
 
-function AddCustomerAlert({ isOpen, onClose, customerTypes, onAdd }: { isOpen: boolean; onClose: () => void; customerTypes: CustomerType[]; onAdd: (customer: Omit<Customer, 'id'>) => void }) {
-  const [formData, setFormData] = useState<Partial<Customer>>({ status: 'Active' })
+function AddCustomerAlert({ isOpen, onClose, customerTypes, onAdd }) {
+  const [formData, setFormData] = useState({ status: 'Active' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => { if (!isOpen) { setFormData({ status: 'Active' }) } }, [isOpen])
@@ -262,7 +239,7 @@ function AddCustomerAlert({ isOpen, onClose, customerTypes, onAdd }: { isOpen: b
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Status</label>
-              <select value={formData.status || 'Active'} onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as 'Active' | 'Inactive' }))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <select value={formData.status || 'Active'} onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
@@ -282,7 +259,7 @@ function AddCustomerAlert({ isOpen, onClose, customerTypes, onAdd }: { isOpen: b
   )
 }
 
-function DeleteCustomerAlert({ isOpen, onClose, customer, onConfirm }: { isOpen: boolean; onClose: () => void; customer: Customer | null; onConfirm: (id: number) => void }) {
+function DeleteCustomerAlert({ isOpen, onClose, customer, onConfirm }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const handleDelete = () => { if (!customer) return; setIsDeleting(true); setTimeout(() => { onConfirm(customer.id); setIsDeleting(false); onClose() }, 300) }
   if (!customer) return null
@@ -300,24 +277,24 @@ function DeleteCustomerAlert({ isOpen, onClose, customer, onConfirm }: { isOpen:
 }
 
 // ============================================================================
-// MAIN PAGE COMPONENT
+// MAIN PAGE
 // ============================================================================
 
 export default function CustomerPage() {
-  const [customers, setCustomers] = useState<Customer[]>(initialCustomers)
-  const [customerTypes] = useState<CustomerType[]>(initialCustomerTypes)
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
+  const [customers, setCustomers] = useState(initialCustomers)
+  const [customerTypes] = useState(initialCustomerTypes)
+  const [activeModal, setActiveModal] = useState(null)
+  const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
 
   const totalPages = Math.max(1, Math.ceil(customers.length / ITEMS_PER_PAGE))
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const currentCustomers = customers.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  const handlePageChange = (page: number) => setCurrentPage(page)
-  const handleView = (c: Customer) => { setSelectedCustomer(c); setActiveModal('view') }
-  const handleEdit = (c: Customer) => { setSelectedCustomer(c); setActiveModal('edit') }
-  const handleDelete = (c: Customer) => { setSelectedCustomer(c); setActiveModal('delete') }
+  const handlePageChange = (page) => setCurrentPage(page)
+  const handleView = (c) => { setSelectedCustomer(c); setActiveModal('view') }
+  const handleEdit = (c) => { setSelectedCustomer(c); setActiveModal('edit') }
+  const handleDelete = (c) => { setSelectedCustomer(c); setActiveModal('delete') }
   const handleAddClick = () => setActiveModal('add')
   const closeModal = () => { setActiveModal(null); setSelectedCustomer(null) }
 
@@ -325,16 +302,16 @@ export default function CustomerPage() {
   const handleExportExcel = () => console.log('Export to Excel clicked')
   const handleDownloadFormat = () => console.log('Download Format clicked')
 
-  const handleAddCustomer = (customer: Omit<Customer, 'id'>) => {
+  const handleAddCustomer = (customer) => {
     const newId = customers.length > 0 ? Math.max(...customers.map(c => c.id)) + 1 : 1
     setCustomers(prev => [...prev, { id: newId, ...customer }])
   }
 
-  const handleSaveEdit = (customer: Customer) => {
+  const handleSaveEdit = (customer) => {
     setCustomers(prev => prev.map(c => c.id === customer.id ? customer : c))
   }
 
-  const handleConfirmDelete = (id: number) => {
+  const handleConfirmDelete = (id) => {
     setCustomers(prev => prev.filter(c => c.id !== id))
   }
 
