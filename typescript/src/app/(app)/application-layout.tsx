@@ -67,13 +67,12 @@ const sidebarMenu: SidebarMenuItem[] = [
       },
       {
         label: 'HRMS',
-        children: [{ label: 'Attendance' }, { label: 'Leave' }, { label: 'Visit Details' }],
+        children: [{ label: 'Attendance' }, { label: 'Leave' }, { label: 'Visit Details' }, { label: 'Claims' }],
       },
       { label: 'Visit Miscellaneous' },
       { label: 'Area Master' },
       { label: 'Planned Beat' },
       { label: 'Goal Setting' },
-      { label: 'Claim' },
       { label: 'Feeds' },
     ],
   },
@@ -101,6 +100,14 @@ const sidebarMenu: SidebarMenuItem[] = [
       { label: 'Coupon Profile' },
       { label: 'Coupon Dispatch' },
       { label: 'Scheme' },
+      {
+        label: 'Invoice Schema',
+        children: [
+          { label: 'Scheme' },
+          { label: 'Invoice' },
+          { label: 'Order' },
+        ],
+      },
     ],
   },
   {

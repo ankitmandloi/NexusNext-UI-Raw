@@ -102,8 +102,13 @@ export default function CommonTable({
       return <span className="text-zinc-400">—</span>
     }
 
-    // Handle status with badge styling
-    if (col.key === 'status') {
+    // If value is already a React element (JSX), return it as-is
+    if (typeof value === 'object' && value.$$typeof) {
+      return value
+    }
+
+    // Handle status with badge styling (only for string values)
+    if (col.key === 'status' && typeof value === 'string') {
       const isActive = value === 'Active'
       return (
         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
@@ -179,9 +184,9 @@ export default function CommonTable({
               
               {/* Middle Headers - Hidden scrollbar but synced */}
               <div ref={headerScrollRef} className="flex-1 overflow-x-hidden">
-                <div className="flex h-11 items-center" style={{ minWidth: getMiddleColumnsWidth() }}>
+                <div className="flex h-11 items-center w-full">
                   {columns.slice(1).map((col) => (
-                    <div key={col.key} className="px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center whitespace-nowrap overflow-hidden" style={getColumnStyle(col.width)}>
+                    <div key={col.key} className={`px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center whitespace-nowrap overflow-hidden ${getColumnClass(col.width, col.flexible)}`} style={getColumnStyle(col.width)}>
                       <span className="block" title={col.label}>{col.label}</span>
                     </div>
                   ))}
@@ -212,7 +217,8 @@ export default function CommonTable({
                       key={row.id || index} 
                       onMouseEnter={() => setHoveredRow(index)} 
                       onMouseLeave={() => setHoveredRow(null)}
-                      className={`flex items-center min-h-[68px] border-b border-zinc-950/5 dark:border-white/5 transition-colors ${index === data.length - 1 ? 'border-b-0' : ''} ${hoveredRow === index ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''}`}
+                      className={`flex items-center min-h-[68px] border-b border-zinc-950/10 dark:border-white/10 transition-colors ${index === data.length - 1 ? 'border-b-0' : ''} ${hoveredRow === index ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''}`}
+                      style={{ position: 'relative', zIndex: hoveredRow === index ? 100 : 1 }}
                     >
                       <div className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 text-center overflow-hidden w-full">
                         {renderCellContent(row[columns[0]?.key], columns[0])}
@@ -224,17 +230,18 @@ export default function CommonTable({
 
               {/* Scrollable Middle Section - Scrollable via sticky scrollbar */}
               <div ref={scrollContainerRef} className="flex-1 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:h-0">
-                <div style={{ minWidth: getMiddleColumnsWidth() }}>
+                <div className="w-full">
                   {data.length === 0 ? null : (
                     data.map((row, index) => (
                       <div 
                         key={row.id || index} 
                         onMouseEnter={() => setHoveredRow(index)} 
                         onMouseLeave={() => setHoveredRow(null)}
-                        className={`flex items-center min-h-[68px] border-b border-zinc-950/5 dark:border-white/5 transition-colors ${index === data.length - 1 ? 'border-b-0' : ''} ${hoveredRow === index ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''}`}
+                        className={`flex items-center min-h-[68px] border-b border-zinc-950/10 dark:border-white/10 transition-colors ${index === data.length - 1 ? 'border-b-0' : ''} ${hoveredRow === index ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''}`}
+                        style={{ position: 'relative', zIndex: hoveredRow === index ? 100 : 1 }}
                       >
                         {columns.slice(1).map((col) => (
-                          <div key={col.key} className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 text-center overflow-hidden" style={getColumnStyle(col.width)}>
+                          <div key={col.key} className={`px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 text-center ${col.label === 'Activity' ? 'overflow-visible' : 'overflow-hidden'} ${getColumnClass(col.width, col.flexible)}`} style={getColumnStyle(col.width)}>
                             {renderCellContent(row[col.key], col)}
                           </div>
                         ))}
@@ -253,7 +260,8 @@ export default function CommonTable({
                         key={row.id || index} 
                         onMouseEnter={() => setHoveredRow(index)} 
                         onMouseLeave={() => setHoveredRow(null)}
-                        className={`flex items-center justify-center min-h-[68px] border-b border-zinc-950/5 dark:border-white/5 transition-colors ${index === data.length - 1 ? 'border-b-0' : ''} ${hoveredRow === index ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''}`}
+                        className={`flex items-center justify-center min-h-[68px] border-b border-zinc-950/10 dark:border-white/10 transition-colors ${index === data.length - 1 ? 'border-b-0' : ''} ${hoveredRow === index ? 'bg-zinc-50 dark:bg-zinc-800/50' : ''}`}
+                        style={{ position: 'relative', zIndex: hoveredRow === index ? 100 : 1 }}
                       >
                         <div className="px-4 py-3 flex items-center justify-center gap-3 w-full">
                           {renderActions(row)}
