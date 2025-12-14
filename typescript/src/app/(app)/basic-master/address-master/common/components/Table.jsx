@@ -15,31 +15,52 @@ export default function CommonTable({
   const [hoveredRow, setHoveredRow] = useState(null)
   const scrollContainerRef = useRef(null)
   const headerScrollRef = useRef(null)
+  const stickyScrollbarRef = useRef(null)
 
-  // Sync horizontal scroll from body to header (invisible sync)
+  // Sync horizontal scroll between header, body, and sticky scrollbar
   useEffect(() => {
     if (!stickyColumns) return
 
     const handleScroll = (e) => {
       const scrollLeft = e.target.scrollLeft
       
-      // Sync scroll from body to header
-      if (e.target === scrollContainerRef.current?.parentElement) {
+      // Sync from sticky scrollbar to content and header
+      if (e.target === stickyScrollbarRef.current) {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollLeft = scrollLeft
+        }
+        if (headerScrollRef.current) {
+          headerScrollRef.current.scrollLeft = scrollLeft
+        }
+      }
+      
+      // Sync from content to scrollbar and header (for touch/trackpad scroll)
+      if (e.target === scrollContainerRef.current) {
+        if (stickyScrollbarRef.current) {
+          stickyScrollbarRef.current.scrollLeft = scrollLeft
+        }
         if (headerScrollRef.current) {
           headerScrollRef.current.scrollLeft = scrollLeft
         }
       }
     }
 
-    const middleBodyScroll = scrollContainerRef.current?.parentElement
+    const contentScroll = scrollContainerRef.current
+    const stickyScroll = stickyScrollbarRef.current
 
-    if (middleBodyScroll) {
-      middleBodyScroll.addEventListener('scroll', handleScroll)
+    if (contentScroll) {
+      contentScroll.addEventListener('scroll', handleScroll)
+    }
+    if (stickyScroll) {
+      stickyScroll.addEventListener('scroll', handleScroll)
     }
 
     return () => {
-      if (middleBodyScroll) {
-        middleBodyScroll.removeEventListener('scroll', handleScroll)
+      if (contentScroll) {
+        contentScroll.removeEventListener('scroll', handleScroll)
+      }
+      if (stickyScroll) {
+        stickyScroll.removeEventListener('scroll', handleScroll)
       }
     }
   }, [stickyColumns])
@@ -150,7 +171,7 @@ export default function CommonTable({
             {/* Headers Row */}
             <div className="flex shrink-0 border-b border-zinc-950/10 dark:border-white/10 sticky top-0 z-10 bg-white dark:bg-zinc-900">
               {/* ID Header */}
-              <div className="flex-shrink-0 border-r border-zinc-950/10 dark:border-white/10 h-11 flex items-center" style={getColumnStyle(columns[0]?.width)}>
+              <div className="flex-shrink-0 h-11 flex items-center" style={getColumnStyle(columns[0]?.width)}>
                 <div className="px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center w-full">
                   {columns[0]?.label}
                 </div>
@@ -169,7 +190,7 @@ export default function CommonTable({
 
               {/* Actions Header */}
               {renderActions && (
-                <div className="flex-shrink-0 border-l border-zinc-950/10 dark:border-white/10 h-11 flex items-center" style={{ width: '160px', minWidth: '160px' }}>
+                <div className="flex-shrink-0 h-11 flex items-center" style={{ width: '160px', minWidth: '160px' }}>
                   <div className="px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center w-full whitespace-nowrap">
                     Actions
                   </div>
@@ -180,7 +201,7 @@ export default function CommonTable({
             {/* Body Rows */}
             <div className="flex">
               {/* Sticky Left Column (ID) */}
-              <div className="flex-shrink-0 border-r border-zinc-950/10 dark:border-white/10" style={getColumnStyle(columns[0]?.width)}>
+              <div className="flex-shrink-0" style={getColumnStyle(columns[0]?.width)}>
                 {data.length === 0 ? (
                   <div className="flex items-center justify-center py-12 text-zinc-500 dark:text-zinc-400">
                     {emptyMessage}
@@ -201,9 +222,9 @@ export default function CommonTable({
                 )}
               </div>
 
-              {/* Scrollable Middle Section - Horizontal scroll only */}
-              <div className="flex-1 overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-                <div ref={scrollContainerRef} style={{ minWidth: getMiddleColumnsWidth() }}>
+              {/* Scrollable Middle Section - Scrollable via sticky scrollbar */}
+              <div ref={scrollContainerRef} className="flex-1 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:h-0">
+                <div style={{ minWidth: getMiddleColumnsWidth() }}>
                   {data.length === 0 ? null : (
                     data.map((row, index) => (
                       <div 
@@ -225,7 +246,7 @@ export default function CommonTable({
 
               {/* Sticky Right Column (Actions) */}
               {renderActions && (
-                <div className="flex-shrink-0 border-l border-zinc-950/10 dark:border-white/10" style={{ width: '160px', minWidth: '160px' }}>
+                <div className="flex-shrink-0" style={{ width: '160px', minWidth: '160px' }}>
                   {data.length === 0 ? null : (
                     data.map((row, index) => (
                       <div 
@@ -243,6 +264,20 @@ export default function CommonTable({
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Sticky Horizontal Scrollbar at Bottom */}
+          <div className="flex shrink-0 sticky bottom-0 bg-white dark:bg-zinc-900">
+            {/* Empty space for ID column */}
+            <div className="flex-shrink-0" style={getColumnStyle(columns[0]?.width)}></div>
+            
+            {/* Scrollable area that syncs with content */}
+            <div ref={stickyScrollbarRef} className="flex-1 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
+              <div style={{ width: getMiddleColumnsWidth(), height: '1px' }}></div>
+            </div>
+            
+            {/* Empty space for Actions column */}
+            {renderActions && <div className="flex-shrink-0" style={{ width: '160px', minWidth: '160px' }}></div>}
           </div>
           
           {/* Pagination inside table boundary */}
