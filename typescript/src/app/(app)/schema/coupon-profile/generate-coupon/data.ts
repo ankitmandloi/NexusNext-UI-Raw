@@ -1,0 +1,120 @@
+export interface GeneratedCoupon {
+  id: string
+  profile: string
+  productType: string
+  product: string
+  category: string
+  quantity: number
+}
+
+export const productTypes = [
+  { id: 1, name: 'Electronics' },
+  { id: 2, name: 'Clothing' },
+  { id: 3, name: 'Food & Beverage' },
+  { id: 4, name: 'Home & Garden' },
+  { id: 5, name: 'Sports & Outdoors' },
+]
+
+export const products = [
+  { id: 1, name: 'Smartphone', typeId: 1 },
+  { id: 2, name: 'Laptop', typeId: 1 },
+  { id: 3, name: 'T-Shirt', typeId: 2 },
+  { id: 4, name: 'Jeans', typeId: 2 },
+  { id: 5, name: 'Coffee', typeId: 3 },
+  { id: 6, name: 'Snacks', typeId: 3 },
+  { id: 7, name: 'Furniture', typeId: 4 },
+  { id: 8, name: 'Tools', typeId: 4 },
+  { id: 9, name: 'Bicycle', typeId: 5 },
+  { id: 10, name: 'Camping Gear', typeId: 5 },
+]
+
+export const categories = [
+  { id: 1, name: 'Premium' },
+  { id: 2, name: 'Standard' },
+  { id: 3, name: 'Budget' },
+  { id: 4, name: 'Luxury' },
+  { id: 5, name: 'Economy' },
+]
+
+export const initialGeneratedCoupons: GeneratedCoupon[] = [
+  {
+    id: 'GC-001',
+    profile: 'Summer Sale 2025',
+    productType: 'Electronics',
+    product: 'Smartphone',
+    category: 'Premium',
+    quantity: 50,
+  },
+  {
+    id: 'GC-002',
+    profile: 'Summer Sale 2025',
+    productType: 'Clothing',
+    product: 'T-Shirt',
+    category: 'Standard',
+    quantity: 100,
+  },
+  {
+    id: 'GC-003',
+    profile: 'Winter Discount',
+    productType: 'Food & Beverage',
+    product: 'Coffee',
+    category: 'Premium',
+    quantity: 75,
+  },
+  {
+    id: 'GC-004',
+    profile: 'VIP Member Offer',
+    productType: 'Electronics',
+    product: 'Laptop',
+    category: 'Luxury',
+    quantity: 25,
+  },
+  {
+    id: 'GC-005',
+    profile: 'Flash Sale',
+    productType: 'Clothing',
+    product: 'Jeans',
+    category: 'Budget',
+    quantity: 150,
+  },
+  {
+    id: 'GC-006',
+    profile: 'Loyalty Rewards',
+    productType: 'Home & Garden',
+    product: 'Furniture',
+    category: 'Standard',
+    quantity: 30,
+  },
+  {
+    id: 'GC-007',
+    profile: 'Holiday Special',
+    productType: 'Sports & Outdoors',
+    product: 'Bicycle',
+    category: 'Premium',
+    quantity: 40,
+  },
+  {
+    id: 'GC-008',
+    profile: 'New Year Promo',
+    productType: 'Food & Beverage',
+    product: 'Snacks',
+    category: 'Economy',
+    quantity: 200,
+  },
+  {
+    id: 'GC-009',
+    profile: 'Clearance Sale',
+    productType: 'Home & Garden',
+    product: 'Tools',
+    category: 'Budget',
+    quantity: 80,
+  },
+  {
+    id: 'GC-010',
+    profile: 'Back to School',
+    productType: 'Electronics',
+    product: 'Laptop',
+    category: 'Standard',
+    quantity: 60,
+  },
+]

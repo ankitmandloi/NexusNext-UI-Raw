@@ -11,6 +11,7 @@ export default function Header({
   addLabel = "Add",
   onAdd,
   dropdownOptions = [],
+  hideAddButton = false,
 }) {
   return (
     <div className="sticky top-0 z-20 bg-white dark:bg-zinc-900 pb-4 shrink-0">
@@ -46,10 +47,12 @@ export default function Header({
             </Dropdown>
           )}
 
-          <Button color="dark/zinc" onClick={onAdd}>
-            <PlusIcon />
-            {addLabel}
-          </Button>
+          {!hideAddButton && (
+            <Button color="dark/zinc" onClick={onAdd}>
+              <PlusIcon />
+              {addLabel}
+            </Button>
+          )}
         </div>
       </div>
     </div>

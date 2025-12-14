@@ -1,0 +1,187 @@
+export type ShopAudit = {
+  id: string
+  customer: string
+  auditType: string
+  auditRemark: string
+  auditImage: string
+  employee: string
+  visit: string
+}
+
+export type Customer = {
+  id: number
+  name: string
+}
+
+export type Employee = {
+  id: number
+  name: string
+}
+
+export type AuditType = {
+  id: number
+  name: string
+}
+
+export type AuditImage = {
+  id: number
+  name: string
+}
+
+export const customers: Customer[] = [
+  { id: 1, name: 'Acme Corporation' },
+  { id: 2, name: 'Tech Solutions Inc.' },
+  { id: 3, name: 'Retail Mart Pvt Ltd' },
+  { id: 4, name: 'Digital Services LLC' },
+  { id: 5, name: 'Manufacturing Co.' },
+  { id: 6, name: 'Healthcare Systems' },
+  { id: 7, name: 'Logistics Express' },
+  { id: 8, name: 'Finance Partners' },
+  { id: 9, name: 'Education Hub' },
+  { id: 10, name: 'Hospitality Group' },
+]
+
+export const employees: Employee[] = [
+  { id: 1, name: 'John Smith' },
+  { id: 2, name: 'Sarah Johnson' },
+  { id: 3, name: 'Michael Brown' },
+  { id: 4, name: 'Emily Davis' },
+  { id: 5, name: 'David Wilson' },
+  { id: 6, name: 'Jennifer Martinez' },
+  { id: 7, name: 'Robert Anderson' },
+  { id: 8, name: 'Lisa Taylor' },
+  { id: 9, name: 'James Thomas' },
+  { id: 10, name: 'Mary Jackson' },
+]
+
+export const auditTypes: AuditType[] = [
+  { id: 1, name: 'Compliance Audit' },
+  { id: 2, name: 'Quality Audit' },
+  { id: 3, name: 'Safety Audit' },
+  { id: 4, name: 'Inventory Audit' },
+  { id: 5, name: 'Process Audit' },
+  { id: 6, name: 'Financial Audit' },
+  { id: 7, name: 'Operational Audit' },
+]
+
+export const auditImages: AuditImage[] = [
+  { id: 1, name: 'Store Front View' },
+  { id: 2, name: 'Interior Layout' },
+  { id: 3, name: 'Product Display' },
+  { id: 4, name: 'Signage & Branding' },
+  { id: 5, name: 'Stock Area' },
+  { id: 6, name: 'Safety Equipment' },
+  { id: 7, name: 'Checkout Counter' },
+  { id: 8, name: 'Customer Zone' },
+]
+
+export const initialShopAudits: ShopAudit[] = [
+  {
+    id: 'SA-001',
+    customer: 'Acme Corporation',
+    auditType: 'Compliance Audit',
+    auditRemark: 'All compliance standards met. Store layout adheres to regulations.',
+    auditImage: 'Store Front View',
+    employee: 'John Smith',
+    visit: '2025-01-15',
+  },
+  {
+    id: 'SA-002',
+    customer: 'Tech Solutions Inc.',
+    auditType: 'Quality Audit',
+    auditRemark: 'Product quality checks completed. Minor improvements suggested.',
+    auditImage: 'Product Display',
+    employee: 'Sarah Johnson',
+    visit: '2025-01-16',
+  },
+  {
+    id: 'SA-003',
+    customer: 'Retail Mart Pvt Ltd',
+    auditType: 'Safety Audit',
+    auditRemark: 'Safety equipment properly maintained. Fire exits clearly marked.',
+    auditImage: 'Safety Equipment',
+    employee: 'Michael Brown',
+    visit: '2025-01-17',
+  },
+  {
+    id: 'SA-004',
+    customer: 'Digital Services LLC',
+    auditType: 'Inventory Audit',
+    auditRemark: 'Stock levels verified. Discrepancies found in electronics section.',
+    auditImage: 'Stock Area',
+    employee: 'Emily Davis',
+    visit: '2025-01-18',
+  },
+  {
+    id: 'SA-005',
+    customer: 'Manufacturing Co.',
+    auditType: 'Process Audit',
+    auditRemark: 'Process workflow optimized. Documentation updated.',
+    auditImage: 'Interior Layout',
+    employee: 'David Wilson',
+    visit: '2025-01-19',
+  },
+  {
+    id: 'SA-006',
+    customer: 'Healthcare Systems',
+    auditType: 'Financial Audit',
+    auditRemark: 'Financial records verified. All transactions properly documented.',
+    auditImage: 'Checkout Counter',
+    employee: 'Jennifer Martinez',
+    visit: '2025-01-20',
+  },
+  {
+    id: 'SA-007',
+    customer: 'Logistics Express',
+    auditType: 'Operational Audit',
+    auditRemark: 'Operations running smoothly. Warehouse organization excellent.',
+    auditImage: 'Stock Area',
+    employee: 'Robert Anderson',
+    visit: '2025-01-21',
+  },
+  {
+    id: 'SA-008',
+    customer: 'Finance Partners',
+    auditType: 'Compliance Audit',
+    auditRemark: 'Regulatory compliance verified. Licenses up to date.',
+    auditImage: 'Store Front View',
+    employee: 'Lisa Taylor',
+    visit: '2025-01-22',
+  },
+  {
+    id: 'SA-009',
+    customer: 'Education Hub',
+    auditType: 'Quality Audit',
+    auditRemark: 'Service quality meets standards. Customer feedback positive.',
+    auditImage: 'Customer Zone',
+    employee: 'James Thomas',
+    visit: '2025-01-23',
+  },
+  {
+    id: 'SA-010',
+    customer: 'Hospitality Group',
+    auditType: 'Safety Audit',
+    auditRemark: 'Safety protocols followed. Emergency procedures well-documented.',
+    auditImage: 'Safety Equipment',
+    employee: 'Mary Jackson',
+    visit: '2025-01-24',
+  },
+  {
+    id: 'SA-011',
+    customer: 'Acme Corporation',
+    auditType: 'Inventory Audit',
+    auditRemark: 'Stock rotation system implemented effectively.',
+    auditImage: 'Stock Area',
+    employee: 'John Smith',
+    visit: '2025-01-25',
+  },
+  {
+    id: 'SA-012',
+    customer: 'Tech Solutions Inc.',
+    auditType: 'Process Audit',
+    auditRemark: 'Process improvements implemented successfully.',
+    auditImage: 'Interior Layout',
+    employee: 'Sarah Johnson',
+    visit: '2025-01-26',
+  },
+]

@@ -1,0 +1,164 @@
+export interface SingleBulkPayout {
+  id: string
+  transactionNumber: string
+  requestRewardType: string
+  customerType: string
+  payoutStartDate: string
+  payoutEndDate: string
+  requestStatus: string
+  isTDSApplicable: string
+  requestCreatedBy: string
+  requestApprovedBy: string
+}
+
+export const requestRewardTypes = [
+  { id: 1, name: 'Cash' },
+  { id: 2, name: 'Points' },
+  { id: 3, name: 'Gift Voucher' },
+  { id: 4, name: 'Discount Coupon' },
+  { id: 5, name: 'Product' },
+]
+
+export const customerTypes = [
+  { id: 1, name: 'Retail' },
+  { id: 2, name: 'Wholesale' },
+  { id: 3, name: 'Distributor' },
+  { id: 4, name: 'Corporate' },
+  { id: 5, name: 'Individual' },
+]
+
+export const tdsApplicableOptions = [
+  { id: 1, name: 'Yes' },
+  { id: 2, name: 'No' },
+]
+
+export const requestStatusOptions = [
+  { id: 1, name: 'Pending' },
+  { id: 2, name: 'Approved' },
+  { id: 3, name: 'Rejected' },
+  { id: 4, name: 'Processing' },
+  { id: 5, name: 'Completed' },
+]
+
+export const initialSingleBulkPayouts: SingleBulkPayout[] = [
+  {
+    id: 'SBP-001',
+    transactionNumber: 'TXN-2025-001',
+    requestRewardType: 'Cash',
+    customerType: 'Retail',
+    payoutStartDate: '2025-01-15',
+    payoutEndDate: '2025-01-20',
+    requestStatus: 'Approved',
+    isTDSApplicable: 'Yes',
+    requestCreatedBy: 'John Doe',
+    requestApprovedBy: 'Sarah Manager',
+  },
+  {
+    id: 'SBP-002',
+    transactionNumber: 'TXN-2025-002',
+    requestRewardType: 'Points',
+    customerType: 'Wholesale',
+    payoutStartDate: '2025-01-18',
+    payoutEndDate: '2025-01-25',
+    requestStatus: 'Processing',
+    isTDSApplicable: 'No',
+    requestCreatedBy: 'Jane Smith',
+    requestApprovedBy: 'Mike Supervisor',
+  },
+  {
+    id: 'SBP-003',
+    transactionNumber: 'TXN-2025-003',
+    requestRewardType: 'Gift Voucher',
+    customerType: 'Corporate',
+    payoutStartDate: '2025-01-20',
+    payoutEndDate: '2025-01-28',
+    requestStatus: 'Completed',
+    isTDSApplicable: 'Yes',
+    requestCreatedBy: 'Robert Johnson',
+    requestApprovedBy: 'Lisa Director',
+  },
+  {
+    id: 'SBP-004',
+    transactionNumber: 'TXN-2025-004',
+    requestRewardType: 'Discount Coupon',
+    customerType: 'Distributor',
+    payoutStartDate: '2025-01-22',
+    payoutEndDate: '2025-01-30',
+    requestStatus: 'Pending',
+    isTDSApplicable: 'No',
+    requestCreatedBy: 'Emily Davis',
+    requestApprovedBy: 'N/A',
+  },
+  {
+    id: 'SBP-005',
+    transactionNumber: 'TXN-2025-005',
+    requestRewardType: 'Product',
+    customerType: 'Individual',
+    payoutStartDate: '2025-01-25',
+    payoutEndDate: '2025-02-01',
+    requestStatus: 'Approved',
+    isTDSApplicable: 'Yes',
+    requestCreatedBy: 'Michael Brown',
+    requestApprovedBy: 'David Admin',
+  },
+  {
+    id: 'SBP-006',
+    transactionNumber: 'TXN-2025-006',
+    requestRewardType: 'Cash',
+    customerType: 'Retail',
+    payoutStartDate: '2025-01-28',
+    payoutEndDate: '2025-02-05',
+    requestStatus: 'Rejected',
+    isTDSApplicable: 'No',
+    requestCreatedBy: 'Sarah Wilson',
+    requestApprovedBy: 'Tom Manager',
+  },
+  {
+    id: 'SBP-007',
+    transactionNumber: 'TXN-2025-007',
+    requestRewardType: 'Points',
+    customerType: 'Wholesale',
+    payoutStartDate: '2025-02-01',
+    payoutEndDate: '2025-02-08',
+    requestStatus: 'Processing',
+    isTDSApplicable: 'Yes',
+    requestCreatedBy: 'Chris Martinez',
+    requestApprovedBy: 'Anna Supervisor',
+  },
+  {
+    id: 'SBP-008',
+    transactionNumber: 'TXN-2025-008',
+    requestRewardType: 'Gift Voucher',
+    customerType: 'Corporate',
+    payoutStartDate: '2025-02-05',
+    payoutEndDate: '2025-02-12',
+    requestStatus: 'Completed',
+    isTDSApplicable: 'Yes',
+    requestCreatedBy: 'Jessica Taylor',
+    requestApprovedBy: 'Mark Director',
+  },
+  {
+    id: 'SBP-009',
+    transactionNumber: 'TXN-2025-009',
+    requestRewardType: 'Discount Coupon',
+    customerType: 'Individual',
+    payoutStartDate: '2025-02-08',
+    payoutEndDate: '2025-02-15',
+    requestStatus: 'Pending',
+    isTDSApplicable: 'No',
+    requestCreatedBy: 'Andrew Garcia',
+    requestApprovedBy: 'N/A',
+  },
+  {
+    id: 'SBP-010',
+    transactionNumber: 'TXN-2025-010',
+    requestRewardType: 'Product',
+    customerType: 'Distributor',
+    payoutStartDate: '2025-02-10',
+    payoutEndDate: '2025-02-18',
+    requestStatus: 'Approved',
+    isTDSApplicable: 'Yes',
+    requestCreatedBy: 'Rachel Lee',
+    requestApprovedBy: 'Kevin Admin',
+  },
+]

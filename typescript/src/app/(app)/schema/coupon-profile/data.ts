@@ -1,0 +1,139 @@
+export interface CouponProfile {
+  id: string
+  couponProfileName: string
+  couponPattern: string
+  couponLength: number
+  excludingCharacter: string
+  customerTypeRequired: string
+  customerType: string
+  status: string
+}
+
+export const couponPatterns = [
+  { id: 1, name: 'Alphanumeric' },
+  { id: 2, name: 'Numeric' },
+  { id: 3, name: 'Alphabetic' },
+  { id: 4, name: 'Custom Pattern' },
+]
+
+export const customerTypeRequiredOptions = [
+  { id: 1, name: 'Yes' },
+  { id: 2, name: 'No' },
+]
+
+export const customerTypes = [
+  { id: 1, name: 'Retail' },
+  { id: 2, name: 'Wholesale' },
+  { id: 3, name: 'Distributor' },
+  { id: 4, name: 'Corporate' },
+  { id: 5, name: 'Individual' },
+]
+
+export const statusOptions = [
+  { id: 1, name: 'Active' },
+  { id: 2, name: 'Inactive' },
+  { id: 3, name: 'Suspended' },
+]
+
+export const initialCouponProfiles: CouponProfile[] = [
+  {
+    id: 'CP-001',
+    couponProfileName: 'Summer Sale 2025',
+    couponPattern: 'Alphanumeric',
+    couponLength: 8,
+    excludingCharacter: 'O0I1',
+    customerTypeRequired: 'Yes',
+    customerType: 'Retail',
+    status: 'Active',
+  },
+  {
+    id: 'CP-002',
+    couponProfileName: 'Winter Discount',
+    couponPattern: 'Numeric',
+    couponLength: 6,
+    excludingCharacter: '',
+    customerTypeRequired: 'No',
+    customerType: 'N/A',
+    status: 'Active',
+  },
+  {
+    id: 'CP-003',
+    couponProfileName: 'VIP Member Offer',
+    couponPattern: 'Alphabetic',
+    couponLength: 10,
+    excludingCharacter: 'OIZ',
+    customerTypeRequired: 'Yes',
+    customerType: 'Corporate',
+    status: 'Active',
+  },
+  {
+    id: 'CP-004',
+    couponProfileName: 'Clearance Sale',
+    couponPattern: 'Alphanumeric',
+    couponLength: 12,
+    excludingCharacter: '0O1I',
+    customerTypeRequired: 'Yes',
+    customerType: 'Wholesale',
+    status: 'Inactive',
+  },
+  {
+    id: 'CP-005',
+    couponProfileName: 'New Year Promo',
+    couponPattern: 'Custom Pattern',
+    couponLength: 9,
+    excludingCharacter: 'OILS',
+    customerTypeRequired: 'No',
+    customerType: 'N/A',
+    status: 'Active',
+  },
+  {
+    id: 'CP-006',
+    couponProfileName: 'Flash Sale',
+    couponPattern: 'Numeric',
+    couponLength: 5,
+    excludingCharacter: '',
+    customerTypeRequired: 'No',
+    customerType: 'N/A',
+    status: 'Active',
+  },
+  {
+    id: 'CP-007',
+    couponProfileName: 'Loyalty Rewards',
+    couponPattern: 'Alphanumeric',
+    couponLength: 8,
+    excludingCharacter: 'O0',
+    customerTypeRequired: 'Yes',
+    customerType: 'Individual',
+    status: 'Active',
+  },
+  {
+    id: 'CP-008',
+    couponProfileName: 'Back to School',
+    couponPattern: 'Alphabetic',
+    couponLength: 7,
+    excludingCharacter: 'OI',
+    customerTypeRequired: 'Yes',
+    customerType: 'Retail',
+    status: 'Suspended',
+  },
+  {
+    id: 'CP-009',
+    couponProfileName: 'Black Friday',
+    couponPattern: 'Alphanumeric',
+    couponLength: 10,
+    excludingCharacter: '0O1I',
+    customerTypeRequired: 'No',
+    customerType: 'N/A',
+    status: 'Inactive',
+  },
+  {
+    id: 'CP-010',
+    couponProfileName: 'Holiday Special',
+    couponPattern: 'Custom Pattern',
+    couponLength: 12,
+    excludingCharacter: 'OILS',
+    customerTypeRequired: 'Yes',
+    customerType: 'Distributor',
+    status: 'Active',
+  },
+]
