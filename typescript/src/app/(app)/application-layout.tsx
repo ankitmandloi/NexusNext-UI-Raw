@@ -96,16 +96,39 @@ const sidebarMenu: SidebarMenuItem[] = [
   {
     label: 'Schema',
     children: [
-      { label: 'Coupon Schema' },
-      { label: 'Coupon Profile' },
-      { label: 'Coupon Dispatch' },
-      { label: 'Scheme' },
+      {
+        label: 'Coupon Schema',
+        children: [
+          { label: 'Coupon Profile' },
+          { label: 'Coupon' },
+          { label: 'Dispatch' },
+          { label: 'Scheme' },
+          { label: 'Transactions - Coupon' },
+          { label: 'Check Allocation' },
+        ],
+      },
       {
         label: 'Invoice Schema',
         children: [
           { label: 'Scheme' },
           { label: 'Invoice' },
           { label: 'Order' },
+        ],
+      },
+      {
+        label: 'Lead Schema',
+        children: [
+          { label: 'Lead Manager' },
+          { label: 'Lead Contacts' },
+          { label: 'Activity Type' },
+          { label: 'Lead Scheme' },
+        ],
+      },
+      {
+        label: 'Ledger & Credit',
+        children: [
+          { label: 'Point Ledger' },
+          { label: 'CreditNote' },
         ],
       },
     ],
@@ -117,7 +140,26 @@ const sidebarMenu: SidebarMenuItem[] = [
       { label: 'Redemption Details' },
       { label: 'Single / Bulk Payout' },
       { label: 'Extra Reward' },
-      { label: 'Procure And Dispatch' },
+      {
+        label: 'Procure And Dispatch',
+        children: [
+          { label: 'Voucher Inventory' },
+          { label: 'Gift Dispatch Details' },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Reward Manager',
+    children: [
+      {
+        label: 'Rewards',
+        children: [
+          { label: 'Primary Category' },
+          { label: 'Base Category' },
+          { label: 'Products' },
+        ],
+      },
     ],
   },
   {
