@@ -13,6 +13,7 @@ import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/na
 import {
   Sidebar,
   SidebarBody,
+  SidebarFooter,
   SidebarHeader,
   SidebarHeading,
   SidebarItem,
@@ -27,7 +28,7 @@ import {
   ShieldCheckIcon,
   UserCircleIcon,
 } from '@heroicons/react/16/solid'
-import { ChevronRightIcon } from '@heroicons/react/20/solid'
+import { ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
@@ -164,11 +165,45 @@ const sidebarMenu: SidebarMenuItem[] = [
   },
   {
     label: 'Miscellaneous',
-    children: [{ label: 'Ticket Management' }, { label: 'Communication' }, { label: 'User Management' }],
+    children: [
+      {
+        label: 'Ticket Management',
+        children: [
+          { label: 'Ticket Status' },
+          { label: 'Ticket Tags' },
+          { label: 'Ticket' },
+        ],
+      },
+      {
+        label: 'Communication',
+        children: [
+          { label: 'Banner Info' },
+          { label: 'Terms And Conditions' },
+          { label: 'Push Notification' },
+          { label: 'Testimonial' },
+        ],
+      },
+      {
+        label: 'User Management',
+        children: [
+          { label: 'Roles' },
+          { label: 'Users' },
+        ],
+      },
+    ],
   },
   {
     label: 'Integrations',
-    children: [{ label: 'DMS Integration' }],
+    children: [
+      {
+        label: 'DMS Integration',
+        children: [
+          { label: 'Distributor' },
+          { label: 'Retailer' },
+          { label: 'Invoice Transaction' },
+        ],
+      },
+    ],
   },
   {
     label: 'Settings',

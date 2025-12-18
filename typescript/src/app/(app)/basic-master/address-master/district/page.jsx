@@ -10,7 +10,7 @@ import {
   EditAlert, 
   DeleteAlert, 
   AddAlert 
-} from '../common/components/alert.jsx'
+} from '../common/components/Alert.jsx'
 
 import CommonPagination from '../common/components/Pagination.jsx'
 

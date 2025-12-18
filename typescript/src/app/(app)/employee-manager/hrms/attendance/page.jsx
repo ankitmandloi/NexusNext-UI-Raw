@@ -13,7 +13,7 @@ import {
   ViewAlert, 
   EditAlert, 
   DeleteAlert 
-} from '../../../basic-master/address-master/common/components/alert.jsx'
+} from '../../../basic-master/address-master/common/components/Alert.jsx'
 
 // ============================================================================
 // CONSTANTS

@@ -8,7 +8,15 @@ import { TouchTarget } from './button'
 import { Link } from './link'
 
 export function Sidebar({ className, ...props }: React.ComponentPropsWithoutRef<'nav'>) {
-  return <nav {...props} className={clsx(className, 'flex h-full min-h-0 flex-col')} />
+  return (
+    <nav
+      {...props}
+      className={clsx(
+        className,
+        'flex h-full min-h-0 flex-col group'
+      )}
+    />
+  )
 }
 
 export function SidebarHeader({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
@@ -30,7 +38,17 @@ export function SidebarBody({ className, ...props }: React.ComponentPropsWithout
       className={clsx(
         className,
         'flex flex-1 flex-col overflow-y-auto p-4 [&>[data-slot=section]+[data-slot=section]]:mt-8',
-        'scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+        // Scrollbar styles - only visible when sidebar is hovered
+        '[&::-webkit-scrollbar]:w-1.5',
+        '[&::-webkit-scrollbar-track]:bg-transparent',
+        '[&::-webkit-scrollbar-thumb]:bg-transparent',
+        '[&::-webkit-scrollbar-thumb]:rounded-full',
+        'group-hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300',
+        'dark:group-hover:[&::-webkit-scrollbar-thumb]:bg-zinc-600',
+        '[scrollbar-width:thin]',
+        '[scrollbar-color:transparent_transparent]',
+        'group-hover:[scrollbar-color:rgb(212_212_216)_transparent]',
+        'dark:group-hover:[scrollbar-color:rgb(82_82_91)_transparent]'
       )}
     />
   )
@@ -97,13 +115,13 @@ export const SidebarItem = forwardRef(function SidebarItem(
     'data-hover:bg-zinc-950/5 data-hover:*:data-[slot=icon]:fill-zinc-950',
     // Active
     'data-active:bg-zinc-950/5 data-active:*:data-[slot=icon]:fill-zinc-950',
-    // Current
-    'data-current:*:data-[slot=icon]:fill-zinc-950',
+    // Current - enhanced highlighting
+    'data-current:bg-zinc-950/10 data-current:font-semibold data-current:*:data-[slot=icon]:fill-zinc-950',
     // Dark mode
     'dark:text-white dark:*:data-[slot=icon]:fill-zinc-400',
     'dark:data-hover:bg-white/5 dark:data-hover:*:data-[slot=icon]:fill-white',
     'dark:data-active:bg-white/5 dark:data-active:*:data-[slot=icon]:fill-white',
-    'dark:data-current:*:data-[slot=icon]:fill-white'
+    'dark:data-current:bg-white/10 dark:data-current:*:data-[slot=icon]:fill-white'
   )
 
   return (
@@ -111,7 +129,7 @@ export const SidebarItem = forwardRef(function SidebarItem(
       {current && (
         <motion.span
           layoutId="current-indicator"
-          className="absolute inset-y-2 -left-4 w-0.5 rounded-full bg-zinc-950 dark:bg-white"
+          className="absolute inset-y-2 -left-[5px] w-0.5 rounded-full bg-zinc-950 dark:bg-white"
         />
       )}
       {typeof props.href === 'string' ? (

@@ -11,7 +11,7 @@ import {
   EditAlert, 
   DeleteAlert, 
   AddAlert 
-} from '../common/components/alert.jsx'
+} from '../common/components/Alert.jsx'
 
 // ============================================================================
 // CONSTANTS
