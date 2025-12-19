@@ -22,7 +22,7 @@ import {
   customerTypeRequiredOptions,
   customerTypes,
   statusOptions,
-} from './data'
+} from '../coupon-profile/data'
 
 const ITEMS_PER_PAGE = 10
 

@@ -5,11 +5,16 @@ import { Input } from '@/components/input'
 import { Avatar } from '@/components/avatar'
 import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/components/alert'
 import { Button } from '@/components/button'
-import Actions from '../../../employee-manager/common/components/Actions.jsx'
-import Header from '../../../employee-manager/common/components/Header.jsx'
-import CommonTable from '../../../employee-manager/common/components/Table.jsx'
-import CommonPagination from '../../../employee-manager/common/components/Pagination.jsx'
 
+import Actions from '../../../basic-master/address-master/common/components/Actions.jsx'
+import Header from '../../../basic-master/address-master/common/components/Header.jsx'
+import CommonTable from '../../../basic-master/address-master/common/components/Table.jsx'
+import CommonPagination from '../../../basic-master/address-master/common/components/Pagination.jsx'
+import { 
+  ViewAlert, 
+  EditAlert, 
+  DeleteAlert 
+} from '../../../basic-master/address-master/common/components/Alert.jsx'
 
 // ============================================================================
 // CONSTANTS
