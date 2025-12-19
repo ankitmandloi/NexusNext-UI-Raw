@@ -5,14 +5,16 @@ import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/
 import { Button } from '@/components/button'
 import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
-import Actions from '../address-master/common/components/Actions.jsx'
+import Actions from '../../basic-master/common/components/Actions.jsx'
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
 } from '@/components/dropdown'
-import CommonPagination from '../address-master/common/components/Pagination.jsx'
+import CommonPagination from '../../basic-master/common/components/Pagination.jsx'
+import CommonTable from '../../basic-master/common/components/Table.jsx'
+import Header from '../../basic-master/common/components/Header.jsx'
 
 import { PlusIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
 
@@ -395,90 +397,40 @@ export default function CustomerTypePage() {
   return (
     <div className="flex flex-col" style={{ height: 'calc(100vh - 110px)' }}>
       {/* HEADER */}
-      <div className="sticky top-0 z-20 bg-white dark:bg-zinc-900 pb-4 shrink-0">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="max-sm:w-full sm:flex-1">
-            <Heading>Customer Type</Heading>
-            <div className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              Manage customer types and loyalty entry types
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Dropdown>
-              <DropdownButton outline>
-                Your Data
-                <ChevronDownIcon />
-              </DropdownButton>
-              <DropdownMenu>
-                <DropdownItem onClick={handleImportExcel}>Import from Excel</DropdownItem>
-                <DropdownItem onClick={handleExportExcel}>Export to Excel</DropdownItem>
-                <DropdownItem onClick={handleDownloadFormat}>Download Format</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            <Button color="dark/zinc" onClick={handleAddClick}>
-              <PlusIcon />
-              Add Customer Type
-            </Button>
-          </div>
-        </div>
-      </div>
+      
+
+      <Header
+              title="Customer Types"
+              subtitle="Manage all customer types in the system"
+              addLabel="Add Customer Type"
+              onAdd={handleAddClick}
+              dropdownOptions={[
+                { label: 'Import from Excel' },
+                { label: 'Export to Excel' },
+                { label: 'Download Format' },
+              ]}
+            />
 
       {/* TABLE */}
       <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
-        <div className="flex-1 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-          <div className="min-w-[700px] flex flex-col h-full">
-            {/* Table Header */}
-            <div className="shrink-0 border-b border-zinc-950/10 dark:border-white/10 h-11 flex items-center bg-white dark:bg-zinc-900">
-              <div className="w-[100px] px-6 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">
-                ID
-              </div>
-              <div className="flex-1 px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">
-                Customer Type
-              </div>
-              <div className="flex-1 px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">
-                Loyalty Entry Type
-              </div>
-              <div className="w-[160px] px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">
-                Actions
-              </div>
-            </div>
-
-            {/* Table Body */}
-            <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-              {customerTypes.length === 0 ? (
-                <div className="flex items-center justify-center py-12 text-zinc-500 dark:text-zinc-400">
-                  No customer types found. Click "Add Customer Type" to create one.
-                </div>
-              ) : (
-                currentCustomerTypes.map((customerType, index) => (
-                  <div
-                    key={customerType.id}
-                    className={`flex items-center py-4 border-b border-zinc-950/5 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${
-                      index === currentCustomerTypes.length - 1 ? 'border-b-0' : ''
-                    }`}
-                  >
-                    <div className="w-[100px] px-6 text-sm text-zinc-500 dark:text-zinc-400 tabular-nums text-center">
-                      {customerType.id}
-                    </div>
-                    <div className="flex-1 px-4 text-sm font-medium text-zinc-950 dark:text-white text-center">
-                      {customerType.customerType}
-                    </div>
-                    <div className="flex-1 px-4 text-sm text-zinc-600 dark:text-zinc-400 text-center">
-                      {customerType.loyaltyEntryType}
-                    </div>
-                    <div className="w-[160px] px-4 flex items-center justify-center">
-                      <Actions
-                        onView={() => handleView(customerType)}
-                        onEdit={() => handleEdit(customerType)}
-                        onDelete={() => handleDelete(customerType)}
-                      />
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
+      <CommonTable
+                data={currentCustomerTypes}
+                emptyMessage="No customer types found. Click 'Add Customer Type' to create one."
+                columns={[
+                  { key: 'id', label: 'ID', width: 100 },
+                  { key: 'customerType', label: 'Customer Type' },
+                  { key: 'loyaltyEntryType', label: 'Loyalty Entry Type' },
+                  
+                ]}
+                renderActions={(customerType) => (
+                  <Actions
+                    onView={() => handleView(customerType)}
+                    onEdit={() => handleEdit(customerType)}
+                    onDelete={() => handleDelete(customerType)}
+                  />
+                )}
+              />
+        
 
         {/* Pagination */}
         <CommonPagination

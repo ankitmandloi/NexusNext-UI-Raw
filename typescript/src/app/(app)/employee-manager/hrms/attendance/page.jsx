@@ -5,15 +5,11 @@ import { Input } from '@/components/input'
 import { Avatar } from '@/components/avatar'
 import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/components/alert'
 import { Button } from '@/components/button'
-import Actions from '../../../basic-master/address-master/common/components/Actions.jsx'
-import Header from '../../../basic-master/address-master/common/components/Header.jsx'
-import CommonTable from '../../../basic-master/address-master/common/components/Table.jsx'
-import CommonPagination from '../../../basic-master/address-master/common/components/Pagination.jsx'
-import { 
-  ViewAlert, 
-  EditAlert, 
-  DeleteAlert 
-} from '../../../basic-master/address-master/common/components/alert.jsx'
+import Actions from '../../../employee-manager/common/components/Actions.jsx'
+import Header from '../../../employee-manager/common/components/Header.jsx'
+import CommonTable from '../../../employee-manager/common/components/Table.jsx'
+import CommonPagination from '../../../employee-manager/common/components/Pagination.jsx'
+
 
 // ============================================================================
 // CONSTANTS
@@ -363,6 +359,8 @@ export default function AttendancePage() {
         ]}
       />
 
+    <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
+
       {/* Table using CommonTable component */}
       <CommonTable
         data={currentAttendance.map(record => ({
@@ -414,14 +412,16 @@ export default function AttendancePage() {
             onDelete={() => handleDelete(row.raw)}
           />
         )}
-        pagination={
+        />
+
+        {/* Pagination using CommonPagination component */}
           <CommonPagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
-        }
-      />
+        
+      </div>
 
       {/* ================================================================== */}
       {/* ALERT MODALS */}

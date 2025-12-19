@@ -11,7 +11,7 @@ import {
   EditAlert, 
   DeleteAlert, 
   AddAlert 
-} from '../common/components/alert.jsx'
+} from '../common/components/Alert.jsx'
 
 // ============================================================================
 // CONSTANTS
@@ -193,13 +193,14 @@ export default function CityPage() {
 
       
 
+    <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
       {/* Table */}
         <CommonTable
         data={currentCities}
         emptyMessage="No cities found. Click 'Add City' to create one."   
         columns={[
           { key: 'id', label: 'ID', width: 100 },
-          { key: 'districtName', label: 'District' },
+          { key: 'districtName', label: 'District'},
           { key: 'cityName', label: 'City Name' },
         ]}
         renderActions={(city) => (
@@ -217,7 +218,7 @@ export default function CityPage() {
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      
+    </div>        
 
       
 

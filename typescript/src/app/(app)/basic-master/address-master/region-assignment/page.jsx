@@ -1,32 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/components/alert'
-import { Button } from '@/components/button'
-import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { useState } from 'react'
 import Actions from '../common/components/Actions'
-import {
-  Dropdown,
-  DropdownButton,
-  DropdownItem,
-  DropdownMenu,
-} from '@/components/dropdown'
+import Header from '../common/components/Header.jsx'
 import CommonPagination from '../common/components/Pagination.jsx'
-
-import { PlusIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
+import CommonTable from '../common/components/Table.jsx'
+import {
+  ViewAlert,
+  EditAlert,
+  DeleteAlert,
+  AddAlert,
+} from '../common/components/Alert.jsx'
 
 // ============================================================================
-// TYPES & INTERFACES (REMOVED FOR JSX)
+// CONSTANTS
 // ============================================================================
 
-// ModalType removed (was 'view' | 'edit' | 'delete' | 'add' | null)
 const ITEMS_PER_PAGE = 10
-
-// ============================================================================
-// CUSTOM ICONS
-// ============================================================================
-
 
 // ============================================================================
 // INITIAL DATA
@@ -64,151 +54,6 @@ const initialAssignments = [
 ]
 
 // ============================================================================
-// ACTION BUTTON COMPONENT
-// ============================================================================
-
-
-
-// ============================================================================
-// MODAL COMPONENTS
-// ============================================================================
-
-function ViewAssignmentAlert({ isOpen, onClose, assignment }) {
-  if (!assignment) return null
-  return (
-    <Alert open={isOpen} onClose={onClose}>
-      <AlertTitle>Region Assignment Details</AlertTitle>
-      <AlertDescription>View the details of the selected assignment below.</AlertDescription>
-      <AlertBody>
-        <div className="space-y-3">
-          <div className="flex gap-2"><span className="font-medium text-zinc-700 dark:text-zinc-300">ID:</span><span className="text-zinc-600 dark:text-zinc-400">{assignment.id}</span></div>
-          <div className="flex gap-2"><span className="font-medium text-zinc-700 dark:text-zinc-300">Region:</span><span className="text-zinc-600 dark:text-zinc-400">{assignment.regionName}</span></div>
-          <div className="flex gap-2"><span className="font-medium text-zinc-700 dark:text-zinc-300">City:</span><span className="text-zinc-600 dark:text-zinc-400">{assignment.cityName}</span></div>
-        </div>
-      </AlertBody>
-      <AlertActions><Button color="dark/zinc" onClick={onClose}>Close</Button></AlertActions>
-    </Alert>
-  )
-}
-
-function EditAssignmentAlert({ isOpen, onClose, assignment, regions, cities, onSave }) {
-  const [editedRegionId, setEditedRegionId] = useState(0)
-  const [editedCityId, setEditedCityId] = useState(0)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  useEffect(() => {
-    if (assignment && isOpen) {
-      setEditedRegionId(assignment.regionId)
-      setEditedCityId(assignment.cityId)
-    }
-  }, [assignment, isOpen])
-
-  const handleSave = () => {
-    if (!assignment || editedRegionId === 0 || editedCityId === 0) return
-    setIsSubmitting(true)
-    const regionName = regions.find(r => r.id === editedRegionId)?.name || ''
-    const cityName = cities.find(c => c.id === editedCityId)?.name || ''
-    setTimeout(() => { onSave(assignment.id, editedRegionId, regionName, editedCityId, cityName); setIsSubmitting(false); onClose() }, 300)
-  }
-
-  const handleCancel = () => { setEditedRegionId(0); setEditedCityId(0); onClose() }
-  if (!assignment) return null
-
-  return (
-    <Alert open={isOpen} onClose={handleCancel}>
-      <AlertTitle>Edit Region Assignment</AlertTitle>
-      <AlertDescription>Update the assignment details below.</AlertDescription>
-      <AlertBody>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Region</label>
-            <select value={editedRegionId} onChange={(e) => setEditedRegionId(parseInt(e.target.value))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value={0}>Select a region</option>
-              {regions.map((r) => (<option key={r.id} value={r.id}>{r.name}</option>))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">City</label>
-            <select value={editedCityId} onChange={(e) => setEditedCityId(parseInt(e.target.value))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value={0}>Select a city</option>
-              {cities.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
-            </select>
-          </div>
-        </div>
-      </AlertBody>
-      <AlertActions>
-        <Button plain onClick={handleCancel} disabled={isSubmitting}>Cancel</Button>
-        <Button color="dark/zinc" onClick={handleSave} disabled={editedRegionId === 0 || editedCityId === 0 || isSubmitting}>{isSubmitting ? 'Saving...' : 'Save'}</Button>
-      </AlertActions>
-    </Alert>
-  )
-}
-
-function AddAssignmentAlert({ isOpen, onClose, regions, cities, onAdd }) {
-  const [selectedRegionId, setSelectedRegionId] = useState(0)
-  const [selectedCityId, setSelectedCityId] = useState(0)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  useEffect(() => { if (!isOpen) { setSelectedRegionId(0); setSelectedCityId(0) } }, [isOpen])
-
-  const handleAdd = () => {
-    if (selectedRegionId === 0 || selectedCityId === 0) return
-    setIsSubmitting(true)
-    const regionName = regions.find(r => r.id === selectedRegionId)?.name || ''
-    const cityName = cities.find(c => c.id === selectedCityId)?.name || ''
-    setTimeout(() => { onAdd(selectedRegionId, regionName, selectedCityId, cityName); setIsSubmitting(false); setSelectedRegionId(0); setSelectedCityId(0); onClose() }, 300)
-  }
-
-  const handleCancel = () => { setSelectedRegionId(0); setSelectedCityId(0); onClose() }
-
-  return (
-    <Alert open={isOpen} onClose={handleCancel}>
-      <AlertTitle>Add New Region Assignment</AlertTitle>
-      <AlertDescription>Assign a city to a region.</AlertDescription>
-      <AlertBody>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Region</label>
-            <select value={selectedRegionId} onChange={(e) => setSelectedRegionId(parseInt(e.target.value))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" autoFocus>
-              <option value={0}>Select a region</option>
-              {regions.map((r) => (<option key={r.id} value={r.id}>{r.name}</option>))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">City</label>
-            <select value={selectedCityId} onChange={(e) => setSelectedCityId(parseInt(e.target.value))} className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value={0}>Select a city</option>
-              {cities.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
-            </select>
-          </div>
-        </div>
-      </AlertBody>
-      <AlertActions>
-        <Button plain onClick={handleCancel} disabled={isSubmitting}>Cancel</Button>
-        <Button color="dark/zinc" onClick={handleAdd} disabled={selectedRegionId === 0 || selectedCityId === 0 || isSubmitting}>{isSubmitting ? 'Adding...' : 'Add'}</Button>
-      </AlertActions>
-    </Alert>
-  )
-}
-
-function DeleteAssignmentAlert({ isOpen, onClose, assignment, onConfirm }) {
-  const [isDeleting, setIsDeleting] = useState(false)
-  const handleDelete = () => { if (!assignment) return; setIsDeleting(true); setTimeout(() => { onConfirm(assignment.id); setIsDeleting(false); onClose() }, 300) }
-  if (!assignment) return null
-
-  return (
-    <Alert open={isOpen} onClose={onClose}>
-      <AlertTitle>Are you sure you want to delete this assignment?</AlertTitle>
-      <AlertDescription>You are about to remove <strong className="text-zinc-900 dark:text-white">{assignment.cityName}</strong> from <strong className="text-zinc-900 dark:text-white">{assignment.regionName}</strong> region. This action cannot be undone.</AlertDescription>
-      <AlertActions>
-        <Button plain onClick={onClose} disabled={isDeleting}>Cancel</Button>
-        <Button color="red" onClick={handleDelete} disabled={isDeleting}>{isDeleting ? 'Deleting...' : 'Yes, Delete'}</Button>
-      </AlertActions>
-    </Alert>
-  )
-}
-
-// ============================================================================
 // MAIN PAGE COMPONENT
 // ============================================================================
 
@@ -216,105 +61,193 @@ export default function RegionAssignmentPage() {
   const [assignments, setAssignments] = useState(initialAssignments)
   const [regions] = useState(initialRegions)
   const [cities] = useState(initialCities)
+
   const [activeModal, setActiveModal] = useState(null)
   const [selectedAssignment, setSelectedAssignment] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
 
+  // Pagination
   const totalPages = Math.max(1, Math.ceil(assignments.length / ITEMS_PER_PAGE))
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const currentAssignments = assignments.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  const currentAssignments = assignments.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  )
 
   const handlePageChange = (page) => setCurrentPage(page)
-  const handleView = (a) => { setSelectedAssignment(a); setActiveModal('view') }
-  const handleEdit = (a) => { setSelectedAssignment(a); setActiveModal('edit') }
-  const handleDelete = (a) => { setSelectedAssignment(a); setActiveModal('delete') }
+
+  // ========================================================================
+  // ACTION HANDLERS
+  // ========================================================================
+
+  const handleView = (assignment) => {
+    setSelectedAssignment(assignment)
+    setActiveModal('view')
+  }
+
+  const handleEdit = (assignment) => {
+    setSelectedAssignment(assignment)
+    setActiveModal('edit')
+  }
+
+  const handleDelete = (assignment) => {
+    setSelectedAssignment(assignment)
+    setActiveModal('delete')
+  }
+
   const handleAddClick = () => setActiveModal('add')
-  const closeModal = () => { setActiveModal(null); setSelectedAssignment(null) }
 
-  const handleImportExcel = () => console.log('Import from Excel clicked')
-  const handleExportExcel = () => console.log('Export to Excel clicked')
-  const handleDownloadFormat = () => console.log('Download Format clicked')
-
-  const handleAddAssignment = (regionId, regionName, cityId, cityName) => {
-    const newId = assignments.length > 0 ? Math.max(...assignments.map(a => a.id)) + 1 : 1
-    setAssignments(prev => [...prev, { id: newId, regionId, regionName, cityId, cityName }])
+  const closeModal = () => {
+    setActiveModal(null)
+    setSelectedAssignment(null)
   }
 
-  const handleSaveEdit = (id, regionId, regionName, cityId, cityName) => {
-    setAssignments(prev => prev.map(a => a.id === id ? { ...a, regionId, regionName, cityId, cityName } : a))
+  // ========================================================================
+  // CRUD HANDLERS
+  // ========================================================================
+
+  const handleAddAssignment = (form) => {
+    const newId =
+      assignments.length > 0
+        ? Math.max(...assignments.map(a => a.id)) + 1
+        : 1
+
+    const regionName = regions.find(r => r.id == form.regionId)?.name
+    const cityName = cities.find(c => c.id == form.cityId)?.name
+
+    setAssignments(prev => [
+      ...prev,
+      {
+        id: newId,
+        regionId: Number(form.regionId),
+        regionName,
+        cityId: Number(form.cityId),
+        cityName,
+      },
+    ])
   }
 
-  const handleConfirmDelete = (id) => {
-    setAssignments(prev => prev.filter(a => a.id !== id))
+  const handleSaveEdit = (updated) => {
+    setAssignments(prev =>
+      prev.map(a =>
+        a.id === selectedAssignment.id
+          ? {
+              ...a,
+              regionId: Number(updated.regionId),
+              regionName: regions.find(r => r.id == updated.regionId)?.name,
+              cityId: Number(updated.cityId),
+              cityName: cities.find(c => c.id == updated.cityId)?.name,
+            }
+          : a
+      )
+    )
   }
+
+  const handleConfirmDelete = () => {
+    setAssignments(prev =>
+      prev.filter(a => a.id !== selectedAssignment.id)
+    )
+  }
+
+  // ========================================================================
+  // RENDER
+  // ========================================================================
 
   return (
     <div className="flex flex-col" style={{ height: 'calc(100vh - 110px)' }}>
-      <div className="sticky top-0 z-20 bg-white dark:bg-zinc-900 pb-4 shrink-0">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="max-sm:w-full sm:flex-1">
-            <Heading>Region Assignment</Heading>
-            <div className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Manage city-region assignments</div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Dropdown>
-              <DropdownButton outline>Your Data<ChevronDownIcon /></DropdownButton>
-              <DropdownMenu>
-                <DropdownItem onClick={handleImportExcel}>Import from Excel</DropdownItem>
-                <DropdownItem onClick={handleExportExcel}>Export to Excel</DropdownItem>
-                <DropdownItem onClick={handleDownloadFormat}>Download Format</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            <Button color="dark/zinc" onClick={handleAddClick}><PlusIcon />Add Assignment</Button>
-          </div>
-        </div>
-      </div>
+      {/* HEADER */}
+      <Header
+        title="Region Assignment"
+        subtitle="Manage city-region assignments"
+        addLabel="Add Assignment"
+        onAdd={handleAddClick}
+        dropdownOptions={[
+          { label: 'Import from Excel' },
+          { label: 'Export to Excel' },
+          { label: 'Download Format' },
+        ]}
+      />
 
+      {/* TABLE */}
       <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
-        <div className="flex-1 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-          <div className="min-w-[700px] flex flex-col h-full">
-            <div className="shrink-0 border-b border-zinc-950/10 dark:border-white/10 h-11 flex items-center bg-white dark:bg-zinc-900">
-              <div className="w-[100px] px-6 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">ID</div>
-              <div className="flex-1 px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Region</div>
-              <div className="flex-1 px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">City</div>
-              <div className="w-[160px] px-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Actions</div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-              {assignments.length === 0 ? (
-                <div className="flex items-center justify-center py-12 text-zinc-500 dark:text-zinc-400">No assignments found. Click "Add Assignment" to create one.</div>
-              ) : (
-                currentAssignments.map((assignment, index) => (
-                  <div key={assignment.id} className={`flex items-center py-4 border-b border-zinc-950/5 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${index === currentAssignments.length - 1 ? 'border-b-0' : ''}`}>
-                    <div className="w-[100px] px-6 text-sm text-zinc-500 dark:text-zinc-400 tabular-nums text-center">{assignment.id}</div>
-                    <div className="flex-1 px-4 text-sm font-medium text-zinc-950 dark:text-white text-center">{assignment.regionName}</div>
-                    <div className="flex-1 px-4 text-sm font-medium text-zinc-950 dark:text-white text-center">{assignment.cityName}</div>
-                    <div className="w-[160px] px-4 flex items-center justify-center">
-                      <Actions
-                        onView={() => handleView(assignment)}
-                        onEdit={() => handleEdit(assignment)}
-                        onDelete={() => handleDelete(assignment)}
-                      />
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
+        <CommonTable
+          data={currentAssignments}
+          emptyMessage='No assignments found. Click "Add Assignment" to create one.'
+          columns={[
+            { key: 'id', label: 'ID', width: 100 },
+            { key: 'regionName', label: 'Region' },
+            { key: 'cityName', label: 'City' },
+          ]}
+          renderActions={(assignment) => (
+            <Actions
+              onView={() => handleView(assignment)}
+              onEdit={() => handleEdit(assignment)}
+              onDelete={() => handleDelete(assignment)}
+            />
+          )}
+        />
 
         <CommonPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-
       </div>
 
-      <AddAssignmentAlert isOpen={activeModal === 'add'} onClose={closeModal} regions={regions} cities={cities} onAdd={handleAddAssignment} />
-      <ViewAssignmentAlert isOpen={activeModal === 'view'} onClose={closeModal} assignment={selectedAssignment} />
-      <EditAssignmentAlert isOpen={activeModal === 'edit'} onClose={closeModal} assignment={selectedAssignment} regions={regions} cities={cities} onSave={handleSaveEdit} />
-      <DeleteAssignmentAlert isOpen={activeModal === 'delete'} onClose={closeModal} assignment={selectedAssignment} onConfirm={handleConfirmDelete} />
+      {/* ================================================================== */}
+      {/* ALERT MODALS */}
+      {/* ================================================================== */}
+
+      {/* ADD */}
+      <AddAlert
+        isOpen={activeModal === 'add'}
+        onClose={closeModal}
+        title="Add New Region Assignment"
+        message="Assign a city to a region."
+        fields={{ regionId: '', cityId: '' }}
+        dropdowns={{ regionId: regions, cityId: cities }}
+        onSave={handleAddAssignment}
+      />
+
+      {selectedAssignment && (
+        <>
+          {/* VIEW */}
+          <ViewAlert
+            isOpen={activeModal === 'view'}
+            onClose={closeModal}
+            title="Region Assignment Details"
+            message="View the details of the selected assignment below."
+            fields={{
+              ID: selectedAssignment.id,
+              Region: selectedAssignment.regionName,
+              City: selectedAssignment.cityName,
+            }}
+          />
+
+          {/* EDIT */}
+          <EditAlert
+            isOpen={activeModal === 'edit'}
+            onClose={closeModal}
+            title="Edit Region Assignment"
+            message="Update the assignment details below."
+            fields={{
+              regionId: selectedAssignment.regionId,
+              cityId: selectedAssignment.cityId,
+            }}
+            dropdowns={{ regionId: regions, cityId: cities }}
+            onSave={handleSaveEdit}
+          />
+
+          {/* DELETE */}
+          <DeleteAlert
+            isOpen={activeModal === 'delete'}
+            onClose={closeModal}
+            title="Are you sure you want to delete this assignment?"
+            message={`You are about to remove ${selectedAssignment.cityName} from ${selectedAssignment.regionName} region. This action cannot be undone.`}
+            onConfirm={handleConfirmDelete}
+          />
+        </>
+      )}
     </div>
   )
 }

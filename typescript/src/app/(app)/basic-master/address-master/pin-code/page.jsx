@@ -1,33 +1,21 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/components/alert'
-import { Button } from '@/components/button'
-import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { useState } from 'react'
+import Header from '../common/components/Header.jsx'
 import Actions from '../common/components/Actions.jsx'
-import {
-  Dropdown,
-  DropdownButton,
-  DropdownItem,
-  DropdownMenu,
-} from '@/components/dropdown'
+import CommonTable from '../common/components/Table.jsx'
 import CommonPagination from '../common/components/Pagination.jsx'
-
-import { PlusIcon,  ChevronDownIcon } from '@heroicons/react/16/solid'
-
-// ============================================================================
-// CUSTOM ICONS
-// ============================================================================
-
-/** Custom delete/trash icon */
-
+import {
+  ViewAlert,
+  EditAlert,
+  DeleteAlert,
+  AddAlert,
+} from '../common/components/Alert.jsx'
 
 // ============================================================================
 // INITIAL DATA
 // ============================================================================
 
-// Sample city data
 const initialCities = [
   { id: 1, name: 'Indore City' },
   { id: 2, name: 'Mhow' },
@@ -39,7 +27,6 @@ const initialCities = [
   { id: 8, name: 'Ahmedabad City' },
 ]
 
-// Sample pincode data
 const initialPincodes = [
   { id: 1, cityId: 1, cityName: 'Indore City', pincode: '452001' },
   { id: 2, cityId: 1, cityName: 'Indore City', pincode: '452002' },
@@ -52,572 +39,201 @@ const initialPincodes = [
 ]
 
 // ============================================================================
-// COMPONENTS
-// ============================================================================
-
-
-
-// ============================================================================
-// VIEW ALERT COMPONENT
-// ============================================================================
-
-function ViewPincodeAlert({
-  isOpen,
-  onClose,
-  pincode,
-}) {
-  if (!pincode) return null
-
-  return (
-    <Alert open={isOpen} onClose={onClose}>
-      <AlertTitle>Pincode Details</AlertTitle>
-      <AlertDescription>
-        View the details of the selected pincode below.
-      </AlertDescription>
-      <AlertBody>
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <span className="font-medium text-zinc-700 dark:text-zinc-300">ID:</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{pincode.id}</span>
-          </div>
-          <div className="flex gap-2">
-            <span className="font-medium text-zinc-700 dark:text-zinc-300">City:</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{pincode.cityName}</span>
-          </div>
-          <div className="flex gap-2">
-            <span className="font-medium text-zinc-700 dark:text-zinc-300">Pin Code:</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{pincode.pincode}</span>
-          </div>
-        </div>
-      </AlertBody>
-      <AlertActions>
-        <Button color="dark/zinc" onClick={onClose}>Close</Button>
-      </AlertActions>
-    </Alert>
-  )
-}
-
-// ============================================================================
-// EDIT ALERT COMPONENT
-// ============================================================================
-
-function EditPincodeAlert({
-  isOpen,
-  onClose,
-  pincode,
-  cities,
-  onSave,
-}) {
-  const [editedCityId, setEditedCityId] = useState(0)
-  const [editedPincode, setEditedPincode] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Populate form when pincode changes
-  useEffect(() => {
-    if (pincode && isOpen) {
-      setEditedCityId(pincode.cityId)
-      setEditedPincode(pincode.pincode)
-    }
-  }, [pincode, isOpen])
-
-  // Handle save action
-  const handleSave = async () => {
-    if (!pincode || !editedPincode.trim() || editedCityId === 0) return
-
-    setIsSubmitting(true)
-    
-    const selectedCity = cities.find(c => c.id === editedCityId)
-    const cityName = selectedCity?.name || ''
-
-    // Simulating API call with timeout
-    setTimeout(() => {
-      onSave(pincode.id, editedCityId, cityName, editedPincode.trim())
-      setIsSubmitting(false)
-      onClose()
-    }, 300)
-  }
-
-  // Handle cancel
-  const handleCancel = () => {
-    setEditedCityId(0)
-    setEditedPincode('')
-    onClose()
-  }
-
-  if (!pincode) return null
-
-  return (
-    <Alert open={isOpen} onClose={handleCancel}>
-      <AlertTitle>Edit Pincode</AlertTitle>
-      <AlertDescription>
-        Update the pincode details below.
-      </AlertDescription>
-      <AlertBody>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="editCitySelect" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              City
-            </label>
-            <select
-              id="editCitySelect"
-              value={editedCityId}
-              onChange={(e) => setEditedCityId(parseInt(e.target.value))}
-              className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-            >
-              <option value={0}>Select a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="editPincode" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Pin Code
-            </label>
-            <Input
-              id="editPincode"
-              type="text"
-              value={editedPincode}
-              onChange={(e) => setEditedPincode(e.target.value)}
-              placeholder="Enter pin code"
-              autoFocus
-            />
-          </div>
-        </div>
-      </AlertBody>
-      <AlertActions>
-        <Button plain onClick={handleCancel} disabled={isSubmitting}>
-          Cancel
-        </Button>
-        <Button 
-          color="dark/zinc" 
-          onClick={handleSave} 
-          disabled={!editedPincode.trim() || editedCityId === 0 || isSubmitting}
-        >
-          {isSubmitting ? 'Saving...' : 'Save'}
-        </Button>
-      </AlertActions>
-    </Alert>
-  )
-}
-
-// ============================================================================
-// ADD PINCODE ALERT COMPONENT
-// ============================================================================
-
-function AddPincodeAlert({
-  isOpen,
-  onClose,
-  cities,
-  onAdd,
-}) {
-  const [selectedCityId, setSelectedCityId] = useState(0)
-  const [newPincode, setNewPincode] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Reset form when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setSelectedCityId(0)
-      setNewPincode('')
-    }
-  }, [isOpen])
-
-  // Handle add action
-  const handleAdd = async () => {
-    if (!newPincode.trim() || selectedCityId === 0) return
-
-    setIsSubmitting(true)
-    
-    const selectedCity = cities.find(c => c.id === selectedCityId)
-    const cityName = selectedCity?.name || ''
-
-    // Simulating API call with timeout
-    setTimeout(() => {
-      onAdd(selectedCityId, cityName, newPincode.trim())
-      setIsSubmitting(false)
-      setSelectedCityId(0)
-      setNewPincode('')
-      onClose()
-    }, 300)
-  }
-
-  // Handle cancel
-  const handleCancel = () => {
-    setSelectedCityId(0)
-    setNewPincode('')
-    onClose()
-  }
-
-  return (
-    <Alert open={isOpen} onClose={handleCancel}>
-      <AlertTitle>Add New Pincode</AlertTitle>
-      <AlertDescription>
-        Enter the details of the new pincode below.
-      </AlertDescription>
-      <AlertBody>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="citySelect" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              City
-            </label>
-            <select
-              id="citySelect"
-              value={selectedCityId}
-              onChange={(e) => setSelectedCityId(parseInt(e.target.value))}
-              className="w-full px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-              autoFocus
-            >
-              <option value={0}>Select a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="newPincode" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Pin Code
-            </label>
-            <Input
-              id="newPincode"
-              type="text"
-              value={newPincode}
-              onChange={(e) => setNewPincode(e.target.value)}
-              placeholder="Enter pin code"
-            />
-          </div>
-        </div>
-      </AlertBody>
-      <AlertActions>
-        <Button plain onClick={handleCancel} disabled={isSubmitting}>
-          Cancel
-        </Button>
-        <Button 
-          color="dark/zinc" 
-          onClick={handleAdd} 
-          disabled={!newPincode.trim() || selectedCityId === 0 || isSubmitting}
-        >
-          {isSubmitting ? 'Adding...' : 'Add'}
-        </Button>
-      </AlertActions>
-    </Alert>
-  )
-}
-
-// ============================================================================
-// DELETE ALERT COMPONENT
-// ============================================================================
-
-function DeletePincodeAlert({
-  isOpen,
-  onClose,
-  pincode,
-  onConfirm,
-}) {
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  // Handle delete confirmation
-  const handleDelete = async () => {
-    if (!pincode) return
-
-    setIsDeleting(true)
-
-    // Simulating API call with timeout
-    setTimeout(() => {
-      onConfirm(pincode.id)
-      setIsDeleting(false)
-      onClose()
-    }, 300)
-  }
-
-  if (!pincode) return null
-
-  return (
-    <Alert open={isOpen} onClose={onClose}>
-      <AlertTitle>Are you sure you want to delete this pincode?</AlertTitle>
-      <AlertDescription>
-        You are about to delete pincode <strong className="text-zinc-900 dark:text-white">{pincode.pincode}</strong> 
-        from <strong className="text-zinc-900 dark:text-white">{pincode.cityName}</strong>. 
-        This action cannot be undone. All associated data will be permanently removed.
-      </AlertDescription>
-      <AlertActions>
-        <Button plain onClick={onClose} disabled={isDeleting}>
-          Cancel
-        </Button>
-        <Button color="red" onClick={handleDelete} disabled={isDeleting}>
-          {isDeleting ? 'Deleting...' : 'Yes, Delete'}
-        </Button>
-      </AlertActions>
-    </Alert>
-  )
-}
-
-// ============================================================================
-// MAIN PAGE COMPONENT
+// MAIN PAGE
 // ============================================================================
 
 export default function PincodePage() {
-  // State management for the lists
   const [pincodes, setPincodes] = useState(initialPincodes)
   const [cities] = useState(initialCities)
 
-  // Modal state management
   const [activeModal, setActiveModal] = useState(null)
   const [selectedPincode, setSelectedPincode] = useState(null)
 
-  // Pagination state
+  // Pagination
+  const ITEMS_PER_PAGE = 10
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
 
-  // Calculate pagination
-  const totalPages = Math.ceil(pincodes.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const currentPincodes = pincodes.slice(startIndex, endIndex)
+  const totalPages = Math.max(1, Math.ceil(pincodes.length / ITEMS_PER_PAGE))
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const currentPincodes = pincodes.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  // Handle page change
-  const handlePageChange = (page) => {
-    setCurrentPage(page)
-  }
-
-  // ============================================================================
+  // --------------------------------------------------------------------------
   // ACTION HANDLERS
-  // ============================================================================
+  // --------------------------------------------------------------------------
 
-  /** Open view modal for a pincode */
   const handleView = (pincode) => {
     setSelectedPincode(pincode)
     setActiveModal('view')
   }
 
-  /** Open edit modal for a pincode */
   const handleEdit = (pincode) => {
     setSelectedPincode(pincode)
     setActiveModal('edit')
   }
 
-  /** Open delete confirmation modal for a pincode */
   const handleDelete = (pincode) => {
     setSelectedPincode(pincode)
     setActiveModal('delete')
   }
 
-  /** Open add pincode modal */
   const handleAddClick = () => {
     setActiveModal('add')
   }
 
-  /** Close all modals */
   const closeModal = () => {
     setActiveModal(null)
     setSelectedPincode(null)
   }
 
-  // ============================================================================
-  // CRUD HANDLERS - Ready for backend integration
-  // ============================================================================
+  // --------------------------------------------------------------------------
+  // CRUD LOGIC (FORM-BASED, SAME AS CITY PAGE)
+  // --------------------------------------------------------------------------
 
-  /**
-   * Handle Excel import
-   * TODO: Integrate with file upload and backend API
-   */
-  const handleImportExcel = () => {
-    console.log('Import from Excel clicked')
+  const handleAddPincode = (form) => {
+    const newId =
+      pincodes.length > 0
+        ? Math.max(...pincodes.map((p) => p.id)) + 1
+        : 1
+
+    const cityName = cities.find((c) => c.id == form.cityId)?.name
+
+    setPincodes((prev) => [
+      ...prev,
+      {
+        id: newId,
+        cityId: Number(form.cityId),
+        cityName,
+        pincode: form.pincode,
+      },
+    ])
   }
 
-  /**
-   * Handle Excel export
-   * TODO: Integrate with backend API to generate Excel file
-   */
-  const handleExportExcel = () => {
-    console.log('Export to Excel clicked')
-  }
-
-  /**
-   * Handle format download
-   * TODO: Integrate with backend API to download template
-   */
-  const handleDownloadFormat = () => {
-    console.log('Download Format clicked')
-  }
-
-  /**
-   * Add a new pincode to the list
-   * @param cityId - The ID of the city
-   * @param cityName - The name of the city
-   * @param pincodeValue - The pincode value
-   */
-  const handleAddPincode = (cityId, cityName, pincodeValue) => {
-    // Generate a temporary ID (in production, this would come from the backend)
-    const newId = pincodes.length > 0 ? Math.max(...pincodes.map(p => p.id)) + 1 : 1
-    const newPincode = { id: newId, cityId, cityName, pincode: pincodeValue }
-    setPincodes((prevPincodes) => [...prevPincodes, newPincode])
-  }
-
-  /**
-   * Update a pincode in the list
-   * @param id - The ID of the pincode to update
-   * @param cityId - The new city ID
-   * @param cityName - The new city name
-   * @param pincodeValue - The new pincode value
-   */
-  const handleSaveEdit = (id, cityId, cityName, pincodeValue) => {
-    setPincodes((prevPincodes) =>
-      prevPincodes.map((pincode) =>
-        pincode.id === id ? { ...pincode, cityId, cityName, pincode: pincodeValue } : pincode
+  const handleSaveEdit = (updated) => {
+    setPincodes((prev) =>
+      prev.map((p) =>
+        p.id === selectedPincode.id
+          ? {
+              ...p,
+              cityId: Number(updated.cityId),
+              cityName: cities.find((c) => c.id == updated.cityId)?.name,
+              pincode: updated.pincode,
+            }
+          : p
       )
     )
   }
 
-  /**
-   * Delete a pincode from the list
-   * @param id - The ID of the pincode to delete
-   */
-  const handleConfirmDelete = (id) => {
-    setPincodes((prevPincodes) => prevPincodes.filter((pincode) => pincode.id !== id))
+  const handleConfirmDelete = () => {
+    setPincodes((prev) =>
+      prev.filter((p) => p.id !== selectedPincode.id)
+    )
   }
 
-  // ============================================================================
+  // --------------------------------------------------------------------------
   // RENDER
-  // ============================================================================
+  // --------------------------------------------------------------------------
 
   return (
     <div className="flex flex-col" style={{ height: 'calc(100vh - 110px)' }}>
-      {/* Header - Sticky */}
-      <div className="sticky top-0 z-20 bg-white dark:bg-zinc-900 pb-4 shrink-0">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="max-sm:w-full sm:flex-1">
-            <Heading>Pincodes</Heading>
-            <div className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              Manage all pincodes in the system
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Dropdown>
-              <DropdownButton outline>
-                Your Data
-                <ChevronDownIcon />
-              </DropdownButton>
-              <DropdownMenu>
-                <DropdownItem onClick={handleImportExcel}>
-                  Import from Excel
-                </DropdownItem>
-                <DropdownItem onClick={handleExportExcel}>
-                  Export to Excel
-                </DropdownItem>
-                <DropdownItem onClick={handleDownloadFormat}>
-                  Download Format
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            <Button color="dark/zinc" onClick={handleAddClick}>
-              <PlusIcon />
-              Add Pincode
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* HEADER */}
+      <Header
+        title="Pincodes"
+        subtitle="Manage all pincodes in the system"
+        addLabel="Add Pincode"
+        onAdd={handleAddClick}
+        dropdownOptions={[
+          { label: 'Import from Excel' },
+          { label: 'Export to Excel' },
+          { label: 'Download Format' },
+        ]}
+      />
 
-      {/* Table Card */}
-      <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
-        {/* Table Header - Fixed */}
-        <div className="shrink-0 border-b border-zinc-950/10 dark:border-white/10 h-11 flex items-center bg-white dark:bg-zinc-900">
-          <div className="w-[10%] pl-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">ID</div>
-          <div className="w-[40%] text-sm font-medium text-zinc-500 dark:text-zinc-400">City</div>
-          <div className="w-[30%] text-sm font-medium text-zinc-500 dark:text-zinc-400">Pin Code</div>
-          <div className="w-[20%] text-sm font-medium text-zinc-500 dark:text-zinc-400 text-center">Actions</div>
-        </div>
+      {/* TABLE */}
+      <CommonTable
+        data={currentPincodes}
+        emptyMessage="No pincodes found. Click 'Add Pincode' to create one."
+        columns={[
+          { key: 'id', label: 'ID', width: 100 },
+          { key: 'cityName', label: 'City' },
+          { key: 'pincode', label: 'Pin Code' },
+        ]}
+        renderActions={(row) => (
+          <Actions
+            onView={() => handleView(row)}
+            onEdit={() => handleEdit(row)}
+            onDelete={() => handleDelete(row)}
+          />
+        )}
+      />
 
-        {/* Scrollable Table Body */}
-        <div className="flex-1 overflow-y-auto overflow-x-auto
-          [&::-webkit-scrollbar]:w-1
-          [&::-webkit-scrollbar]:h-1
-          [&::-webkit-scrollbar-track]:bg-transparent
-          [&::-webkit-scrollbar-thumb]:bg-zinc-300
-          [&::-webkit-scrollbar-thumb]:rounded-full
-          dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600"
-        >
-          {pincodes.length === 0 ? (
-            <div className="flex items-center justify-center py-12 text-zinc-500 dark:text-zinc-400">
-              No pincodes found. Click "Add Pincode" to create one.
-            </div>
-          ) : (
-            currentPincodes.map((pincode, index) => (
-              <div 
-                key={pincode.id} 
-                className={`flex items-center py-[1.1rem] border-b border-zinc-950/5 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${
-                  index === currentPincodes.length - 1 ? 'border-b-0' : ''
-                }`}
-              >
-                <div className="w-[10%] pl-6 text-sm text-zinc-500 dark:text-zinc-400 tabular-nums">
-                  {pincode.id}
-                </div>
-                <div className="w-[40%] text-sm font-medium text-zinc-950 dark:text-white">
-                  {pincode.cityName}
-                </div>
-                <div className="w-[30%] text-sm font-medium text-zinc-950 dark:text-white">
-                  {pincode.pincode}
-                </div>
-                <div className="w-[160px] px-4 flex items-center justify-center">
-                  <Actions
-                    onView={() => handleView(pincode)}
-                    onEdit={() => handleEdit(pincode)}
-                    onDelete={() => handleDelete(pincode)}
-                  />
-                </div>
+      {/* PAGINATION */}
+      <CommonPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
-              </div>
-            ))
-          )}
-        </div>
+      {/* ================================================================= */}
+      {/* ALERTS */}
+      {/* ================================================================= */}
 
-        {/* Pagination Footer - Same height as header */}
-        <CommonPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
-
-      {/* ================================================================== */}
-      {/* ALERT MODALS */}
-      {/* ================================================================== */}
-
-      {/* Add Pincode Alert */}
-      <AddPincodeAlert
+      {/* ADD */}
+      <AddAlert
         isOpen={activeModal === 'add'}
         onClose={closeModal}
-        cities={cities}
-        onAdd={handleAddPincode}
+        title="Add New Pincode"
+        message="Enter the details of the new pincode below."
+        fields={{
+          cityId: '',
+          pincode: '',
+        }}
+        dropdowns={{
+          cityId: cities,
+        }}
+        onSave={handleAddPincode}
       />
 
-      {/* View Pincode Alert */}
-      <ViewPincodeAlert
-        isOpen={activeModal === 'view'}
-        onClose={closeModal}
-        pincode={selectedPincode}
-      />
+      {selectedPincode && (
+        <>
+          {/* VIEW */}
+          <ViewAlert
+            isOpen={activeModal === 'view'}
+            onClose={closeModal}
+            title="Pincode Details"
+            message="View the details of the selected pincode below."
+            fields={{
+              ID: selectedPincode.id,
+              City: selectedPincode.cityName,
+              'Pin Code': selectedPincode.pincode,
+            }}
+          />
 
-      {/* Edit Pincode Alert */}
-      <EditPincodeAlert
-        isOpen={activeModal === 'edit'}
-        onClose={closeModal}
-        pincode={selectedPincode}
-        cities={cities}
-        onSave={handleSaveEdit}
-      />
+          {/* EDIT */}
+          <EditAlert
+            isOpen={activeModal === 'edit'}
+            onClose={closeModal}
+            title="Edit Pincode"
+            message="Update the pincode details below."
+            fields={{
+              cityId: selectedPincode.cityId,
+              pincode: selectedPincode.pincode,
+            }}
+            dropdowns={{
+              cityId: cities,
+            }}
+            onSave={handleSaveEdit}
+          />
 
-      {/* Delete Pincode Alert */}
-      <DeletePincodeAlert
-        isOpen={activeModal === 'delete'}
-        onClose={closeModal}
-        pincode={selectedPincode}
-        onConfirm={handleConfirmDelete}
-      />
+          {/* DELETE */}
+          <DeleteAlert
+            isOpen={activeModal === 'delete'}
+            onClose={closeModal}
+            title="Delete Are you sure you want to delete this pincode?"
+            message={`You are about to delete pincode ${selectedPincode.pincode} from ${selectedPincode.cityName}. This action cannot be undone.`}
+            onConfirm={handleConfirmDelete}
+          />
+        </>
+      )}
     </div>
   )
 }

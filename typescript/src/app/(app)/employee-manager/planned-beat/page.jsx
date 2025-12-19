@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { Input } from '@/components/input'
 import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/components/alert'
 import { Button } from '@/components/button'
-import Actions from '../../basic-master/address-master/common/components/Actions.jsx'
-import Header from '../../basic-master/address-master/common/components/Header.jsx'
-import CommonTable from '../../basic-master/address-master/common/components/Table.jsx'
-import CommonPagination from '../../basic-master/address-master/common/components/Pagination.jsx'
+import Actions from '../../employee-manager/common/components/Actions.jsx'
+import Header from '../../employee-manager/common/components/Header.jsx'
+import CommonTable from '../../employee-manager/common/components/Table.jsx'
+import CommonPagination from '../../employee-manager/common/components/Pagination.jsx'
 
 // ============================================================================
 // CONSTANTS
@@ -373,6 +373,7 @@ export default function PlannedBeatPage() {
           { label: 'Download Format', onClick: handleDownloadFormat },
         ]}
       />
+    <div className="flex flex-1 flex-col rounded-lg border border-zinc-950/10 dark:border-white/10 overflow-hidden min-h-0">
 
       {/* Table using CommonTable component */}
       <CommonTable
@@ -424,14 +425,13 @@ export default function PlannedBeatPage() {
             onDelete={() => handleDelete(row.raw)}
           />
         )}
-        pagination={
+        />
           <CommonPagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
-        }
-      />
+      </div>
 
       {/* ================================================================== */}
       {/* CREATE CLAIM MODAL */}
